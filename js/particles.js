@@ -16,25 +16,36 @@ var initAnimation = null;
     function makeLines() {
         var geometry, material, line;
 
+        // for (var i = 0; i < Audio.frequencyBuckets; i++) {
+        //     // line 
+        //     geometry = new THREE.Geometry();
+        //     geometry.vertices.push(
+        //         new THREE.Vector3(i/8 - 30, 0, 0),
+        //         new THREE.Vector3(i/8 - 30, 1, 0)
+        //     );
+        //     geometry.verticesNeedUpdate = true;
+        //     material = new THREE.LineBasicMaterial({color: 0x00ff00});
+        //     line = new THREE.Line(geometry, material);
+        //     lines.push(line);
+        //     scene.add(line);
+        // }
+
+        geometry = new THREE.Geometry();
         for (var i = 0; i < Audio.frequencyBuckets; i++) {
-            // line 
-            geometry = new THREE.Geometry();
-            geometry.vertices.push(
-                new THREE.Vector3(i/8 - 30, 0, 0),
-                new THREE.Vector3(i/8 - 30, 1, 0)
-            );
-            geometry.verticesNeedUpdate = true;
-            material = new THREE.LineBasicMaterial({color: 0x00ff00});
-            line = new THREE.Line(geometry, material);
-            lines.push(line);
-            scene.add(line);
+            geometry.vertices.push(new THREE.Vector3(i/10 - 30, 0, 0));
         }
+        geometry.verticesNeedUpdate = true;
+        material = new THREE.LineBasicMaterial({color: 0x00ff00});
+        line = new THREE.Line(geometry, material);
+        lines.push(line);
+        scene.add(line);
     }
 
     function updateLines() {
         for (var i = 0; i < Audio.frequencyBuckets; i++) {
-            lines[i].geometry.vertices[1].y = Audio.data[i]/20;
-            lines[i].geometry.verticesNeedUpdate = true;
+            // lines[i].geometry.vertices[1].y = Audio.data[i]/20;
+            lines[0].geometry.vertices[i].y = Audio.data[i]/20;
+            lines[0].geometry.verticesNeedUpdate = true;
         }
     }
 
