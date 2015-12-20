@@ -11,29 +11,30 @@ var initAnimation = null;
 
     camera.position.z = 20;
 
-    var particles = [];
+    var lines = [];
 
-    function makeParticles() {
-        var geometry, material, particle;
+    function makeLines() {
+        var geometry, material, line;
 
         for (var i = 0; i < Audio.frequencyBuckets; i++) {
-            // particle 
-            geometry = new THREE.SphereGeometry(1, 4, 4);
-            material = new THREE.MeshBasicMaterial({color: 0xffffff});
-            particle = new THREE.Mesh( geometry, material );
-            // give it a random x and y position between -500 and 500
-            particle.position.x = i*1 - 700;
-            particle.position.y = 100;
-            particle.position.z = -400;
-
-            particles.push(particle);
-            scene.add(particle);
+            // line 
+            geometry = new THREE.Geometry();
+            geometry.vertices.push(
+                new THREE.Vector3(i/8 - 30, 0, 0),
+                new THREE.Vector3(i/8 - 30, 1, 0)
+            );
+            geometry.verticesNeedUpdate = true;
+            material = new THREE.LineBasicMaterial({color: 0x00ff00});
+            line = new THREE.Line(geometry, material);
+            lines.push(line);
+            scene.add(line);
         }
     }
 
-    function updateParticles() {
+    function updateLines() {
         for (var i = 0; i < Audio.frequencyBuckets; i++) {
-            particles[i].position.y = Audio.data[i];
+            lines[i].geometry.vertices[1].y = Audio.data[i]/20;
+            lines[i].geometry.verticesNeedUpdate = true;
         }
     }
 
@@ -41,14 +42,14 @@ var initAnimation = null;
     function render() {
         requestAnimationFrame(render);
         Audio.updateData();
-        updateParticles();
+        updateLines();
         renderer.render(scene, camera);
         
     }
 
     initAnimation = function() {
         console.log('init animation called');
-        makeParticles();
+        makeLines();
         render();    
     }
     

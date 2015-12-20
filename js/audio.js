@@ -4,7 +4,7 @@ var Audio = {};
 
     Audio.setup = false;
     Audio.updateData = null;
-    Audio.frequencyBuckets = 1024;
+    Audio.frequencyBuckets = 512;
     Audio.data = new Uint8Array(Audio.frequencyBuckets); // same as freqBuckets
 
     var ctx; //audio context 
