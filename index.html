@@ -9,6 +9,8 @@
       <script src="js/three.min.js" defer></script>
       <script src="js/particles.js" defer></script>
       <script src="js/audio.js" defer></script>
+      <script src="https://connect.soundcloud.com/sdk/sdk-3.0.0.js" defer></script>
+      <script src="js/soundcloud_client.js" defer></script>
 
       <!-- style -->
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
@@ -17,5 +19,17 @@
       
     </head>
     <body>
+
+      <nav class="navbar navbar-inverse navbar-fixed-top">
+        <form class="navbar-form navbar-left" role="search">
+          <div class="form-group">
+            <!-- TODO: replace with SoundCloud logo -->
+            <label for="search-soundcloud">Search SoundCloud</label> 
+            <input type="text" class="form-control" id="search-soundcloud" placeholder="Kanye West">
+          </div>
+          <button type="submit" class="btn btn-default" id="submit-search">Search</button>
+        </form>
+      </nav>
+
     </body>
 </html>

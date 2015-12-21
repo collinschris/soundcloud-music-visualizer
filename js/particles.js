@@ -9,7 +9,7 @@ var initAnimation = null;
     renderer.setSize( window.innerWidth, window.innerHeight );
     document.body.appendChild(renderer.domElement);
     // position camera 
-    camera.position.y = 10;
+    camera.position.y = 15;
     camera.position.z = 25;
     camera.lookAt(new THREE.Vector3(0, 0, 0));
 
@@ -38,6 +38,7 @@ var initAnimation = null;
         if (lines.length === 0) return;
         var line = lines.shift();
         for (var i = 0; i < Audio.frequencyBuckets; i++) {
+            // line.material.color.setHex(0xff0000);
             line.geometry.vertices[i].y = Audio.data[i]/20;
             line.geometry.vertices[i].z = 0;
             line.geometry.verticesNeedUpdate = true;
