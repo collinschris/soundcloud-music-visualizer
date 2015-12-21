@@ -33,7 +33,6 @@
                 //decode the loaded data 
                 ctx.decodeAudioData(req.response, function(buffer) { 
                     buf = buffer; 
-                    console.log('file loaded');
                     Audio.play(); 
                 }); 
             }; 

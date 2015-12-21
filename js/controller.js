@@ -10,6 +10,8 @@
         self.searchQuery = '';
         self.searchResults = [];
 
+        // TODO: fix bug only allow 1 song to be played at a time
+
         self.search = function(query) {
           if (query === '') return;
           console.log('search called');
