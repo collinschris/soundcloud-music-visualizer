@@ -5,7 +5,7 @@
     /* Controllers */
     var controller = angular.module('musicVizController');
 
-    controller.controller('musicVizController', ['$scope', '$timeout', 'soundcloudAPI', 'Audio', function($scope, $timeout, SC, Audio) {
+    controller.controller('musicVizController', ['$scope', '$timeout', 'soundcloudAPI', 'Audio', 'Graphics', function($scope, $timeout, SC, Audio, Graphics) {
         var self = this;
         self.searchQuery = '';
         self.searchResults = [];
@@ -22,7 +22,19 @@
           self.searchQuery = '';
           self.searchResults = [];
           Audio.loadFile(track.stream_url + '?client_id=5a890217b642c08738865e3687299be3');
-          // TODO: refactor audio and graphics so they can communicate 
+          self.initGraphics();
+        };
+
+        self.initGraphics = function() {
+          $timeout(function() {
+            if (Audio.setup) {
+              console.log('starting animation');
+              Graphics.startAnimation();
+            } else {
+              console.log('loading...');
+              self.initGraphics();
+            }
+          }, 200);
         };
 
         $scope.$watch(function() { return self.searchQuery; }, function(query) {
@@ -34,6 +46,7 @@
           }, 500);
         }, true);
 
+        Graphics.init();
 
 
     }]);
