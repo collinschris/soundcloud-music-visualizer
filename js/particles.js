@@ -1,5 +1,3 @@
-var initAnimation = null;
-
 (function(){
     // Three.js vars 
     var scene = new THREE.Scene();
@@ -67,11 +65,15 @@ var initAnimation = null;
         
     }
 
-    initAnimation = function() {
+    var initAnimation = function() {
         console.log('init animation called');
         makeLines();
         render();    
     }
     
+
+    angular.module('Graphics').factory('Graphics', [function() {
+        return { init: initAnimation };
+    }]);
 
 }());

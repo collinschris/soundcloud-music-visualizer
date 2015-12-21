@@ -12,6 +12,11 @@ canvas {
 nav label {
   color: white;
 }
+
+.static {
+  position: absolute;
+}
+
 /*
 input {
   position: absolute;
