@@ -36,6 +36,7 @@
 
         Graphics.updateLines = function() {
             if (Graphics._lines.length === 0) return;
+            // TODO: make this more efficient.. remove slideBackLines arr
             var line = Graphics._lines.shift();
             for (var i = 0; i < Audio.frequencyBuckets; i++) {
                 // line.material.color.setHex(0xff0000);

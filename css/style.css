@@ -18,6 +18,15 @@ nav label {
   top: 50px;
 }
 
+.list-group {
+  background-color: black;
+  color: black;
+}
+
+.list-group li {
+  color: black;
+}
+
 /*
 input {
   position: absolute;
