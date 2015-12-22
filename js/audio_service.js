@@ -25,8 +25,13 @@
             AudioPlayer.audioElem.crossOrigin = "anonymous";
             AudioPlayer.audioElem.setAttribute('id', 'player');
             document.body.appendChild(AudioPlayer.audioElem);
+            AudioPlayer.audioElem.onended = AudioPlayer.trackEnded;
 
             AudioPlayer.configNodes();
+        };
+
+        AudioPlayer.trackEnded = function() {
+            $rootScope.$broadcast('trackFinished');
         };
 
         AudioPlayer.configNodes = function() {

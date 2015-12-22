@@ -31,8 +31,6 @@
             <input ng-model="ctrl.searchQuery" type="text" class="form-control" id="search-soundcloud" placeholder="Kanye West">
           </div>
         </form>
-        <button ng-click="ctrl.pauseTrack()" class="btn btn-default">Pause</button>
-        <button ng-click="ctrl.playTrack()" class="btn btn-default">Play</button>
       </nav>
       <div class="static">
         <ul class="list-group">
@@ -48,7 +46,8 @@
                 <button ng-click="ctrl.addToTrackQueue(result)" class="btn btn-small btn-default"><span class="glyphicon glyphicon-plus"></span></button>
               </div>
           </li>
-          <p ng-repeat="track in ctrl.trackQueue" style="color: white;">{{ track.stream_url }}</p>
+          <p style="color: white;">Queue:</p>
+          <p ng-repeat="track in ctrl.trackQueue" style="color: white;">{{ track.title + ', ' + track.user.username }}</p>
 
         </ul>
       </div>

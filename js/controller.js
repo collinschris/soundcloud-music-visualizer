@@ -26,39 +26,21 @@
         };
 
         self.selectTrack = function(track) {
-            // TODO: check that this song can be streamed... may be related to login
-            console.log('track is streamable:', track.streamable);
-            console.log(track);
-            console.log(track.stream_url + '?client_id=' + CLIENT_ID);
-            // if (Audio.setup) Audio.src.stop(); 
             self.searchQuery = '';
             self.searchResults = [];
             Audio.loadTrack(track.stream_url + '?client_id=' + CLIENT_ID);
-            self.initGraphics();
-        };
-
-        self.initGraphics = function() {
-            $timeout(function() {
-                if (Audio.configured) {
-                    console.log('CONFIGURED!!!');
-                    Graphics.startAnimation();
-                } else {
-                    console.log('waiting...');
-                    self.initGraphics();
-                }
-            }, 200);
+            Graphics.startAnimation();
         };
 
         self.addToTrackQueue = function(track) {
             self.trackQueue.push(track);
             console.log('song added to queue');
-            if (!Audio.setup && self.trackQueue.length === 1) {
+            if (self.trackQueue.length === 1 && !Audio.configured) {
                 self.selectTrack(self.trackQueue.shift());
             }
         };
 
         // TODO: move to next song
-
         $scope.$watch(function() { return self.searchQuery; }, function(query) {
             // search if done typing
             $timeout(function() {
@@ -68,6 +50,8 @@
             }, 500);
         }, true);
 
+
+        // TODO: refactor
         $scope.$on('trackFinished', function(event) {
             if (self.trackQueue.length > 0) {
                 console.log('selecting track from queue');
