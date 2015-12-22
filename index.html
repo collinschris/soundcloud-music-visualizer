@@ -14,8 +14,6 @@
       <script src="js/audio_service.js" defer></script>
       <script src="js/graphics.js" defer></script>
       <script src="js/filters.js" defer></script>
-      <script src="https://connect.soundcloud.com/sdk/sdk-3.0.0.js"></script>
-
 
       <!-- style -->
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
@@ -54,69 +52,7 @@
 
         </ul>
       </div>
-<!-- <audio id="player" controls autoplay preload autobuffer crossorigin="anonymous" src="https://api.soundcloud.com/tracks/52010243/stream?client_id=5a890217b642c08738865e3687299be3"></audio> -->
-      <!-- <audio id="player"></audio> -->
-      <script type="text/javascript">
-        // SC.initialize({
-        //   client_id: '5a890217b642c08738865e3687299be3',
-        //   redirect_url: 'http://127.0.0.1:8080/'
-        // });
-        // TODO: test if soundcloud sdk has the same CORS issue
-        // SC.stream('/tracks/123063109').then(function(player){
-        //   console.log('playing song with SC SDK', player);          
-        // });
-        
-        // var player = document.getElementById('player');
-        // var analyser;
-        // var audioCtx = new AudioContext(); // this is because it's not been standardised accross browsers yet.
-        // console.log('created AudioContext');
-        // analyser = audioCtx.createAnalyser();
-        // console.log('created analyser');
-        // analyser.fftSize = 256; // see - there is that 'fft' thing. 
-        // var source = audioCtx.createMediaElementSource(player); // this is where we hook up the <audio> element
-        // console.log('created source');
-        // source.connect(analyser);
-        // analyser.connect(audioCtx.destination);
 
-
-        // console.log('linked', player);
-        // player.setAttribute('src', 'https://api.soundcloud.com/tracks/123063109/stream?client_id=5a890217b642c08738865e3687299be3');
-        // player.load();
-        // player.play();
-        var audio = new Audio();
-        audio.src = 'https://api.soundcloud.com/tracks/52010243/stream?client_id=5a890217b642c08738865e3687299be3';
-        audio.controls = true;
-        audio.autoplay = true;
-        audio.crossOrigin = "anonymous";
-        document.body.appendChild(audio);
-
-        var context = new (window.AudioContext || window.webkitAudioContext)();
-
-        window.addEventListener('load', function(e) {
-
-          analyser = context.createAnalyser();
-          console.log('created analyser');
-          analyser.fftSize = 256; // see - there is that 'fft' thing. 
-          var source = context.createMediaElementSource(audio);
-          console.log('created source');
-          source.connect(analyser);
-          analyser.connect(context.destination);
-
-          var data = new Uint8Array(256);
-          // analyser.getByteFrequencyData(data);
-
-          console.log(context, source);
-          function getDataLoop() {
-            setTimeout(function() {
-              analyser.getByteFrequencyData(data);
-              console.log(data);
-              getDataLoop();
-            }, 100);
-          }
-        }, false);
-
-       
-      </script>
 
     </body>
 </html>

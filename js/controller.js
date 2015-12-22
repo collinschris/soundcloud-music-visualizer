@@ -30,20 +30,20 @@
             console.log('track is streamable:', track.streamable);
             console.log(track);
             console.log(track.stream_url + '?client_id=' + CLIENT_ID);
-            if (Audio.setup) Audio.src.stop();
+            // if (Audio.setup) Audio.src.stop(); 
             self.searchQuery = '';
             self.searchResults = [];
-            Audio.loadFile(track.stream_url + '?client_id=' + CLIENT_ID);
+            Audio.loadTrack(track.stream_url + '?client_id=' + CLIENT_ID);
             self.initGraphics();
         };
 
         self.initGraphics = function() {
             $timeout(function() {
-                if (Audio.setup) {
-                    console.log('starting animation');
+                if (Audio.configured) {
+                    console.log('CONFIGURED!!!');
                     Graphics.startAnimation();
                 } else {
-                    console.log('loading...');
+                    console.log('waiting...');
                     self.initGraphics();
                 }
             }, 200);
@@ -55,14 +55,6 @@
             if (!Audio.setup && self.trackQueue.length === 1) {
                 self.selectTrack(self.trackQueue.shift());
             }
-        };
-
-        self.playTrack = function() {
-            Audio.play();
-        };
-
-        self.pauseTrack = function() {
-            Audio.pause();
         };
 
         // TODO: move to next song
