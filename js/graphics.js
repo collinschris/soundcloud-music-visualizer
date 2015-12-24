@@ -35,7 +35,7 @@
             for (var i = 0; i < Graphics._nLines; i++) {
                 geometry = new THREE.Geometry();
                 for (var j = 0; j < Audio.frequencyBuckets; j++) {
-                    geometry.vertices.push(new THREE.Vector3(j/10 - 25, 0, -410));
+                    geometry.vertices.push(new THREE.Vector3((j/8) - 34, 0, -410));
                 }
                 geometry.verticesNeedUpdate = true;
                 material = new THREE.LineBasicMaterial({color: 0x00ff00});

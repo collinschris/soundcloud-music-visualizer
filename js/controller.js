@@ -55,6 +55,7 @@
         };
 
         self.nextTrack = function() {
+            self.currentTrack = null;
             if (self.trackQueue.length > 0) {
                 console.log('next track from queue');
                 self.selectTrack(self.trackQueue.shift());
