@@ -17,41 +17,56 @@
 
       <!-- style -->
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-      <link href='https://fonts.googleapis.com/css?family=Roboto+Mono' rel='stylesheet' type='text/css'>
+      <!-- <link href='https://fonts.googleapis.com/css?family=Roboto+Mono' rel='stylesheet' type='text/css'> -->
       <link rel="stylesheet" type="text/css" href="css/style.css">
       
     </head>
     <body ng-controller="musicVizController as ctrl">
 
-      <nav class="navbar navbar-inverse navbar-fixed-top">
-        <form class="navbar-form navbar-left" role="search">
-          <div class="form-group">
-            <!-- TODO: replace with SoundCloud logo -->
-            <label for="search-soundcloud">Search SoundCloud</label> 
-            <input ng-model="ctrl.searchQuery" type="text" class="form-control" id="search-soundcloud" placeholder="Kanye West">
-          </div>
-        </form>
-      </nav>
-      <div class="static">
-        <ul class="list-group">
-          <!-- TODO: add filter for longer names -->
-          <li ng-class="{'list-group-item':true, 'active':hovering}" 
-              ng-mouseenter="hovering=true"
-              ng-mouseleave="hovering=false"
-              ng-repeat="result in ctrl.searchResults | streamable">
+      <div ng-mousemove="ctrl.handleMouseMove()">
 
-              {{ result.title }}
-              <div class="pull-right">
-                <button ng-click="ctrl.selectTrack(result)" class="btn btn-small btn-default"><span class="glyphicon glyphicon-play"></span></button>
-                <button ng-click="ctrl.addToTrackQueue(result)" class="btn btn-small btn-default"><span class="glyphicon glyphicon-plus"></span></button>
-              </div>
-          </li>
+        <nav ng-show="ctrl.showMenus" class="navbar navbar-inverse navbar-fixed-top">
+          <form class="navbar-form navbar-left" role="search">
+            <div class="form-group">
+              <!-- TODO: replace with SoundCloud logo -->
+              <label for="search-soundcloud">Search SoundCloud</label> 
+              <input ng-model="ctrl.searchQuery" type="text" class="form-control" id="search-soundcloud" placeholder="Kanye West">
+            </div>
+          </form>
+        </nav>
+
+        <div ng-show="ctrl.showMenus" class="static" id="search-results">
+          <ul class="list-group">
+            <!-- TODO: add filter for longer names -->
+            <li ng-class="{'list-group-item':true, 'active':hovering}" 
+                ng-mouseenter="hovering=true"
+                ng-mouseleave="hovering=false"
+                ng-repeat="result in ctrl.searchResults | streamable">
+
+                {{ result.title }}
+                <div class="pull-right">
+                  <button ng-click="ctrl.selectTrack(result)" class="btn btn-small btn-default"><span class="glyphicon glyphicon-play"></span></button>
+                  <button ng-click="ctrl.addToTrackQueue(result)" class="btn btn-small btn-default"><span class="glyphicon glyphicon-plus"></span></button>
+                </div>
+            </li>
+          </ul>
+        </div>
+
+        <div ng-show="ctrl.showMenus" class="static" id="track-queue">
           <p style="color: white;">Queue:</p>
-          <p ng-repeat="track in ctrl.trackQueue" style="color: white;">{{ track.title + ', ' + track.user.username }}</p>
+          <p ng-repeat="track in ctrl.trackQueue track by $index" style="color: white;">{{ track.title + ', ' + track.user.username }}</p>
+        </div>
 
-        </ul>
+        <div id="canvas-wrapper"></div>
+        <!-- <audio preload="auto" src="https://api.soundcloud.com/tracks/49406466/stream?client_id=5a890217b642c08738865e3687299be3" controls autoplay id="player"></audio> -->
+        <footer ng-show="ctrl.showMenus">
+          <div class="container">
+            <div class="row">
+              <div class="col-md-offset-4 col-md-4" id="audio-wrapper"></div>
+            </div>
+          </div>
+        </footer>
+
       </div>
-
-
     </body>
 </html>

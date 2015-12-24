@@ -11,9 +11,11 @@
         self.searchQuery = '';
         self.searchResults = [];
         self.trackQueue = [];
+        self.showMenus = true;
+        self.mouseTimeout;
+        self.currentTrack = null;
 
-        // TODO: fix bug only allow 1 song to be played at a time
-        // TODO: make song queue
+        // TODO: make trackQueue save to local storage
 
         self.search = function(query) {
             if (query === '') {
@@ -26,10 +28,12 @@
         };
 
         self.selectTrack = function(track) {
+            console.log(track);
             self.searchQuery = '';
             self.searchResults = [];
-            Audio.loadTrack(track.stream_url + '?client_id=' + CLIENT_ID);
+            Audio.loadTrack(track.stream_url + '?client_id=' + CLIENT_ID, true);
             Graphics.startAnimation();
+            self.currentTrack = track;
         };
 
         self.addToTrackQueue = function(track) {
@@ -40,8 +44,16 @@
             }
         };
 
-        // TODO: move to next song
+        self.handleMouseMove = function() {
+            $timeout.cancel(self.mouseTimeout);
+            self.showMenus = true;
+            self.mouseTimeout = $timeout(function() {
+                self.showMenus = false;
+            }, 6000);
+        };
+
         $scope.$watch(function() { return self.searchQuery; }, function(query) {
+            self.handleMouseMove(); // preven menu from hidding while typing 
             // search if done typing
             $timeout(function() {
                 if (query === self.searchQuery) {
@@ -50,17 +62,21 @@
             }, 500);
         }, true);
 
-
-        // TODO: refactor
         $scope.$on('trackFinished', function(event) {
             if (self.trackQueue.length > 0) {
                 console.log('selecting track from queue');
                 self.selectTrack(self.trackQueue.shift());
+                $scope.$apply();
             }
         });
 
-        Graphics.init();
+        $scope.$on('noTrackAnalyser', function(event) {
+            Audio.loadTrack(self.currentTrack.stream_url + '?client_id=' + CLIENT_ID, false);
+            Graphics.stopAnimation();
+            // display some message to user
+        }); 
 
+        Graphics.init();
 
     }]);
         

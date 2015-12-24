@@ -11,7 +11,7 @@
                         client_id: '5a890217b642c08738865e3687299be3',
                         q: queryStr, 
                       }}).then(function(tracks) {
-                          return tracks
+                          return tracks;
                       });
         }
       }

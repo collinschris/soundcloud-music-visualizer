@@ -3,21 +3,26 @@
 
     angular.module('Graphics').factory('Graphics', ['Audio', function(Audio) {
         var Graphics = {};
+        Graphics._height = window.innerHeight;
+        Graphics._width = window.innerWidth;
         Graphics.scene = new THREE.Scene();
-        Graphics.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 400);
+        Graphics.camera = new THREE.PerspectiveCamera(75, Graphics._width / Graphics._height, 1, 400);
         Graphics.renderer = new THREE.WebGLRenderer();
         Graphics._lines = [];
         Graphics._slideBackLines = [];
         Graphics._nLines = 203;
+        Graphics._frameID = -1;
+        
         Graphics.init = function() {
             // setup
-            Graphics.renderer.setSize( window.innerWidth, window.innerHeight );
-            document.body.appendChild(Graphics.renderer.domElement);
+            Graphics.renderer.setSize( Graphics._width, Graphics._height );
+            document.getElementById('canvas-wrapper').appendChild(Graphics.renderer.domElement);
             // position camera 
             Graphics.camera.position.y = 15;
             Graphics.camera.position.z = 25;
             Graphics.camera.lookAt(new THREE.Vector3(0, 0, 0));
         };
+        
         Graphics.makeLines = function() {
             var geometry, material, line;
 
@@ -58,15 +63,22 @@
             }
             Graphics._slideBackLines.unshift(line);
         };
+        
         Graphics.render = function() {
-            requestAnimationFrame(Graphics.render);
+            Graphics._frameID = requestAnimationFrame(Graphics.render);
             Audio.updateData();
             Graphics.updateLines();
             Graphics.renderer.render(Graphics.scene, Graphics.camera);
         };
+
         Graphics.startAnimation = function() {
             Graphics.makeLines();
             Graphics.render();
+        };
+        
+        Graphics.stopAnimation = function() {
+            console.log('canceling animation frame');
+            cancelAnimationFrame(Graphics._frameID);
         };
 
         return Graphics;
