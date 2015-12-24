@@ -15,12 +15,18 @@
         
         Graphics.init = function() {
             // setup
-            Graphics.renderer.setSize( Graphics._width, Graphics._height );
+            Graphics.renderer.setSize(Graphics._width, Graphics._height);
             document.getElementById('canvas-wrapper').appendChild(Graphics.renderer.domElement);
             // position camera 
             Graphics.camera.position.y = 15;
             Graphics.camera.position.z = 25;
             Graphics.camera.lookAt(new THREE.Vector3(0, 0, 0));
+        };
+
+        Graphics.updateCanvasSize = function(width, height) {
+            Graphics._width = width;
+            Graphics._height = height;
+            Graphics.renderer.setSize(Graphics._width, Graphics._height);
         };
         
         Graphics.makeLines = function() {

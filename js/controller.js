@@ -6,7 +6,7 @@
     /* Controllers */
     var controller = angular.module('musicVizController');
 
-    controller.controller('musicVizController', ['$scope', '$timeout', 'soundcloudAPI', 'Audio', 'Graphics', function($scope, $timeout, SC, Audio, Graphics) {
+    controller.controller('musicVizController', ['$scope', '$timeout', 'soundcloudAPI', 'Audio', 'Graphics', '$window', function($scope, $timeout, SC, Audio, Graphics, $window) {
         var self = this;
         self.searchQuery = '';
         self.searchResults = [];
@@ -15,8 +15,6 @@
         self.mouseTimeout;
         self.currentTrack = null;
         self.nextTrackAvailable = false;
-
-        // TODO: make trackQueue save to local storage
 
         self.search = function(query) {
             if (query === '') {
@@ -35,6 +33,7 @@
             Audio.loadTrack(track.stream_url + '?client_id=' + CLIENT_ID, true);
             Graphics.startAnimation();
             self.currentTrack = track;
+            localStorage.setItem('currentTrack', JSON.stringify(self.currentTrack));
         };
 
         self.addToTrackQueue = function(track) {
@@ -44,6 +43,7 @@
                 self.selectTrack(self.trackQueue.shift());
             }
             self.nextTrackAvailable = self.trackQueue.length > 0;
+            localStorage.setItem('trackQueue', JSON.stringify(self.trackQueue));
         };
 
         self.handleMouseMove = function() {
@@ -60,6 +60,7 @@
                 self.selectTrack(self.trackQueue.shift());
             } 
             self.nextTrackAvailable = self.trackQueue.length > 0;
+            localStorage.setItem('trackQueue', JSON.stringify(self.trackQueue));
         };
 
         $scope.$watch(function() { return self.searchQuery; }, function(query) {
@@ -80,10 +81,23 @@
         $scope.$on('noTrackAnalyser', function(event) {
             Audio.loadTrack(self.currentTrack.stream_url + '?client_id=' + CLIENT_ID, false);
             Graphics.stopAnimation();
-            // display some message to user
+            // TODO: display some message to user
         }); 
 
-        Graphics.init();
+        // call on load
+        (function() {
+            self.currentTrack = JSON.parse(localStorage.currentTrack);
+            self.trackQueue = JSON.parse(localStorage.trackQueue);
+            self.nextTrackAvailable = self.trackQueue.length > 0;
+            if (self.currentTrack) {
+                self.selectTrack(self.currentTrack);
+            }
+            Graphics.init();
+        }());
+
+        $window.onresize = function() {
+            Graphics.updateCanvasSize($window.innerWidth, $window.innerHeight);
+        };
 
     }]);
         

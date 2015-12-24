@@ -53,7 +53,8 @@
         </div>
 
         <div ng-show="ctrl.showMenus" class="static" id="track-queue">
-          <p style="color: white;">Queue:</p>
+          <p style="color: white;">Track Queue:</p>
+          <!-- TODO: add track directive with picture thumbnail and artist info -->
           <p ng-repeat="track in ctrl.trackQueue track by $index" style="color: white;">{{ track.title + ', ' + track.user.username }}</p>
         </div>
 
