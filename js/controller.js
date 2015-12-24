@@ -14,6 +14,7 @@
         self.showMenus = true;
         self.mouseTimeout;
         self.currentTrack = null;
+        self.nextTrackAvailable = false;
 
         // TODO: make trackQueue save to local storage
 
@@ -42,6 +43,7 @@
             if (self.trackQueue.length === 1 && !Audio.configured) {
                 self.selectTrack(self.trackQueue.shift());
             }
+            self.nextTrackAvailable = self.trackQueue.length > 0;
         };
 
         self.handleMouseMove = function() {
@@ -50,6 +52,14 @@
             self.mouseTimeout = $timeout(function() {
                 self.showMenus = false;
             }, 6000);
+        };
+
+        self.nextTrack = function() {
+            if (self.trackQueue.length > 0) {
+                console.log('next track from queue');
+                self.selectTrack(self.trackQueue.shift());
+            } 
+            self.nextTrackAvailable = self.trackQueue.length > 0;
         };
 
         $scope.$watch(function() { return self.searchQuery; }, function(query) {
@@ -63,11 +73,8 @@
         }, true);
 
         $scope.$on('trackFinished', function(event) {
-            if (self.trackQueue.length > 0) {
-                console.log('selecting track from queue');
-                self.selectTrack(self.trackQueue.shift());
-                $scope.$apply();
-            }
+            self.nextTrack();
+            $scope.$apply();
         });
 
         $scope.$on('noTrackAnalyser', function(event) {
