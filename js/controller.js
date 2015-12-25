@@ -94,6 +94,7 @@
                 self.selectTrack(self.currentTrack);
             }
             Graphics.init();
+            Graphics.selectStyle(0);
         }());
 
         $window.onresize = function() {
