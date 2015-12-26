@@ -81,7 +81,7 @@
         SphereStyle.centralSphere;
         SphereStyle.lights = [];
         SphereStyle.lightSphere;
-        SphereStyle.line;
+        SphereStyle.timeFrequencyLines = [];
 
         SphereStyle.init = function() {
 
@@ -111,23 +111,36 @@
             light.position.x = 15;
             light.position.z = 10;
 
-            // add line from light to circle
-            // 1) draw line coordinates on normal x/y plane
-            // 2) transform line to change angle and connect to end points
-                // change distance with line.scale and update position for each vertex
-                // change orientation with vector3.applyAxisAngle
+            console.log(light);
 
-            geometry = new THREE.Geometry();
-            for (var i = 0; i < Audio.frequencyBuckets; i++) {
-                geometry.vertices.push(new THREE.Vector3(i*1, 0, 0));
+            // set up sound time lines
+            var line;
+            for (var i = 0; i < SphereStyle.lights.length; i++) {
+                geometry = new THREE.Geometry();
+                for (var j = 0; j < Audio.frequencyBuckets; j++) {
+                    geometry.vertices.push(new THREE.Vector3(j, 0, 0));
+                }
+                geometry.verticesNeedUpdate = true;
+                material = new THREE.LineBasicMaterial({color: SphereStyle.lights[i].color.getHex()}); 
+                line = new THREE.Line(geometry, material);
+
+                SphereStyle.createLink(line, SphereStyle.lights[i].position, new THREE.Vector3(0, 0, 0)); 
+
+                SphereStyle.timeFrequencyLines.push(line);
+                Graphics.scene.add(line);
             }
-            geometry.verticesNeedUpdate = true;
-            material = new THREE.LineBasicMaterial({color: 0x00ff00});
-            SphereStyle.line = new THREE.Line(geometry, material);
 
-            SphereStyle.createLink(SphereStyle.line, new THREE.Vector3(0, 0, 0), new THREE.Vector3(15, 0, 10));
+            // geometry = new THREE.Geometry();
+            // for (var i = 0; i < Audio.frequencyBuckets; i++) {
+            //     geometry.vertices.push(new THREE.Vector3(i*1, 0, 0));
+            // }
+            // geometry.verticesNeedUpdate = true;
+            // material = new THREE.LineBasicMaterial({color: 0x00ff00});
+            // SphereStyle.line = new THREE.Line(geometry, material);
 
-            Graphics.scene.add(SphereStyle.line);
+            // SphereStyle.createLink(SphereStyle.line, new THREE.Vector3(0, 0, 0), new THREE.Vector3(15, 0, 10));
+
+            // Graphics.scene.add(SphereStyle.line);
 
             SphereStyle.render();
 
@@ -217,22 +230,27 @@
                 total += Audio.data[i];
             }
             var avg = total/Audio.frequencyBuckets + 1;
-            console.log(avg);
+            // console.log(avg);
             SphereStyle.setRadius(SphereStyle.centralSphere, avg/10.0);
             // SphereStyle.setRadius(SphereStyle.centralSphere, 1);
 
-            for (var i = 0; i < Audio.frequencyBuckets; i++) {
-                SphereStyle.line.geometry.vertices[i].x = i;
-                SphereStyle.line.geometry.vertices[i].y = Audio.data[i];
-                SphereStyle.line.geometry.vertices[i].z = 0;
+            for (var i = 0; i < SphereStyle.timeFrequencyLines.length; i++) {
+                for (var j = 0; j < Audio.frequencyBuckets; j++) {
+                    SphereStyle.timeFrequencyLines[i].geometry.vertices[j].x = (j/10) - 35;
+                    SphereStyle.timeFrequencyLines[i].geometry.vertices[j].y = (Audio.timeData[j]/256.0)*10;
+                    SphereStyle.timeFrequencyLines[i].geometry.vertices[j].z = 0;
+                }
+
+                SphereStyle.createLink(SphereStyle.timeFrequencyLines[i], SphereStyle.lights[i].position, new THREE.Vector3(0, 0, 0));    
+                SphereStyle.timeFrequencyLines[i].geometry.verticesNeedUpdate = true;
             }
-            SphereStyle.createLink(SphereStyle.line, new THREE.Vector3(15, 0, 10), new THREE.Vector3(0, 0, 0));
-            SphereStyle.line.geometry.verticesNeedUpdate = true;
+            
         };
 
         SphereStyle.render = function() {
             Graphics._frameID = requestAnimationFrame(SphereStyle.render);
             Audio.updateData();
+            Audio.updateTimeData();
             SphereStyle.updateAnimation();
             Graphics.renderer.render(Graphics.scene, Graphics.camera);
         };
@@ -251,8 +269,8 @@
             // TODO: don't add if already there
             document.getElementById('canvas-wrapper').appendChild(Graphics.renderer.domElement);
             // position camera 
-            Graphics.camera.position.y = 15;
-            Graphics.camera.position.z = 25;
+            Graphics.camera.position.y = 0;
+            Graphics.camera.position.z = 30;
             Graphics.camera.lookAt(new THREE.Vector3(0, 0, 0));
         };
 

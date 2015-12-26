@@ -11,6 +11,7 @@
         AudioPlayer.analyser;
         AudioPlayer.frequencyBuckets = 512;
         AudioPlayer.data = new Uint8Array(AudioPlayer.frequencyBuckets);
+        AudioPlayer.timeData = new Uint8Array(AudioPlayer.frequencyBuckets);
         AudioPlayer.configured = false;
 
         AudioPlayer.loadTrack = function(trackURL, useAnalyser) {
@@ -62,6 +63,10 @@
 
         AudioPlayer.updateData = function() {
             AudioPlayer.analyser.getByteFrequencyData(AudioPlayer.data);
+        };
+
+        AudioPlayer.updateTimeData = function() {
+            AudioPlayer.analyser.getByteTimeDomainData(AudioPlayer.timeData);
         };
 
         return AudioPlayer;
