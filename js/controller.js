@@ -95,7 +95,7 @@
             }
             Graphics.init();
             Graphics.selectStyle(1);
-            // Graphics.startAnimation();
+            Graphics.startAnimation();
         }());
 
         $window.onresize = function() {

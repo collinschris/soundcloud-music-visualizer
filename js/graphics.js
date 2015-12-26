@@ -95,22 +95,125 @@
             SphereStyle.lightSphere = new THREE.SphereGeometry( 0.5, 16, 8 );
 
             light = SphereStyle.addLightPoint(0xff0000);
-            light.position.x = -10;
+            light.position.x = -15;
             light.position.z = 10;
 
             light = SphereStyle.addLightPoint(0x00ff00);
-            light.position.y = 10;
+            light.position.y = 15;
             light.position.z = 10;
 
             light = SphereStyle.addLightPoint(0x0000ff);
-            light.position.y = -10;
+            light.position.y = -15;
             light.position.z = 10;
 
             light = SphereStyle.addLightPoint(0xffff00);
-            light.position.x = 10;
+            light.position.x = 15;
             light.position.z = 10;
 
+            // add line from light to circle
+            // 1) draw line coordinates on normal x/y plane
+            // 2) transform line to change angle and connect to end points
+                // change distance with line.scale and update position for each vertex
+                // change orientation with vector3.applyAxisAngle
+
+            geometry = new THREE.Geometry();
+            geometry.vertices.push(new THREE.Vector3(10, 0, 0));
+            geometry.vertices.push(new THREE.Vector3(20, 0, 0));
+            geometry.verticesNeedUpdate = true;
+            material = new THREE.LineBasicMaterial({color: 0x00ff00});
+            var line = new THREE.Line(geometry, material);
+
+            SphereStyle.createLink(line, new THREE.Vector3(0, 0, 0), new THREE.Vector3(15, 0, 10));
+
+            // DISTANCE CHANGE
+            // line.geometry.scale(2, 2, 2);
+            // // line position === start vector - current start vector
+            // for (var i = 0; i < 2; i++) {
+            //     geometry.vertices[i].x += -10 - -20;
+            //     geometry.vertices[i].y += -2 - -4;
+            //     geometry.vertices[i].z += 0;
+            // }
+            // console.log('before angle', JSON.stringify(geometry.vertices));
+
+            // // ANGLE CHANGE
+            // for (var i = 0; i < 2; i++) {
+            //     geometry.vertices[i].applyAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI/4.0);
+            // }
+            // console.log('after angle', JSON.stringify(geometry.vertices));
+
+            // // USE DISTANCE CHANGE TO ADJUST LINE LENGTH
+            // for (var i = 0; i < 2; i++) {
+            //     geometry.vertices[i].x += -10 - geometry.vertices[0].x;
+            //     geometry.vertices[i].y += 0 - geometry.vertices[0].y;
+            //     geometry.vertices[i].z += 0 - geometry.vertices[0].z;
+            // }
+            // console.log('after position', JSON.stringify(geometry.vertices));
+            
+
+
+            Graphics.scene.add(line);
+
             SphereStyle.render();
+
+        };
+
+        SphereStyle.createLink = function(line, start, end) {
+            // add line from start to end
+            // 1) set angle
+                // calculate angle
+                // set angle with vertex.applyAxisAngle
+            // 2) set length
+                // calculate scale
+                // use line.scale
+            // 3) adjust position 
+                // vertex += start - currentStart
+            // ANGLE
+            var axisAngle = SphereStyle.calculateAxisAngle(start, end);
+            for (var i = 0; i < line.geometry.vertices.length; i++) {
+                line.geometry.vertices[i].applyAxisAngle(axisAngle.axis, axisAngle.angle);
+            }
+            // DISTANCE
+            var currDist = SphereStyle.distance(line.geometry.vertices[0], line.geometry.vertices[line.geometry.vertices.length - 1]);
+            var targetDist = SphereStyle.distance(start, end);
+            var scale = SphereStyle.calculateScale(currDist, targetDist);
+            line.geometry.scale(scale, scale, scale);
+
+
+            // POSITION            
+            var currentStart = {};
+            currentStart.x = line.geometry.vertices[0].x;
+            currentStart.y = line.geometry.vertices[0].y;
+            currentStart.z = line.geometry.vertices[0].z;
+            for (var i = 0; i < line.geometry.vertices.length; i++) {
+                line.geometry.vertices[i].x += start.x - currentStart.x;
+                line.geometry.vertices[i].y += start.y - currentStart.y;
+                line.geometry.vertices[i].z += start.z - currentStart.z;
+            }
+
+
+        };
+
+        SphereStyle.distance = function(vecA, vecB) {
+            var vec = {};
+            vec.x = vecA.x - vecB.x;
+            vec.y = vecA.y - vecB.y;
+            vec.z = vecA.z - vecB.z;
+            return Math.sqrt(vec.x*vec.x + vec.y*vec.y + vec.z*vec.z);
+        };
+
+        SphereStyle.dotProduct = function(vecA, vecB) {
+            return vecA.x * vecB.x + vecA.y * vecB.y + vecA.z * vecB.z;
+        };
+
+        SphereStyle.calculateAxisAngle = function(start, end) {
+            // subtract to get directional vector
+            // use unit vector [1, 0, 0]
+            var directionVector = new THREE.Vector3();
+            directionVector.subVectors(end, start).normalize();
+            var angle = Math.acos(SphereStyle.dotProduct(directionVector, new THREE.Vector3(1, 0, 0)));
+            var axis = new THREE.Vector3();
+            axis.crossVectors(new THREE.Vector3(1, 0, 0), directionVector).normalize();
+            return {axis: axis, angle: angle};
 
         };
 
@@ -144,8 +247,8 @@
 
         SphereStyle.render = function() {
             Graphics._frameID = requestAnimationFrame(SphereStyle.render);
-            Audio.updateData();
-            SphereStyle.updateAnimation();
+            // Audio.updateData();
+            // SphereStyle.updateAnimation();
             Graphics.renderer.render(Graphics.scene, Graphics.camera);
         };
 
