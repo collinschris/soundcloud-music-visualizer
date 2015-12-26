@@ -81,6 +81,7 @@
         SphereStyle.centralSphere;
         SphereStyle.lights = [];
         SphereStyle.lightSphere;
+        SphereStyle.line;
 
         SphereStyle.init = function() {
 
@@ -117,41 +118,16 @@
                 // change orientation with vector3.applyAxisAngle
 
             geometry = new THREE.Geometry();
-            geometry.vertices.push(new THREE.Vector3(10, 0, 0));
-            geometry.vertices.push(new THREE.Vector3(20, 0, 0));
+            for (var i = 0; i < Audio.frequencyBuckets; i++) {
+                geometry.vertices.push(new THREE.Vector3(i*1, 0, 0));
+            }
             geometry.verticesNeedUpdate = true;
             material = new THREE.LineBasicMaterial({color: 0x00ff00});
-            var line = new THREE.Line(geometry, material);
+            SphereStyle.line = new THREE.Line(geometry, material);
 
-            SphereStyle.createLink(line, new THREE.Vector3(0, 0, 0), new THREE.Vector3(15, 0, 10));
+            SphereStyle.createLink(SphereStyle.line, new THREE.Vector3(0, 0, 0), new THREE.Vector3(15, 0, 10));
 
-            // DISTANCE CHANGE
-            // line.geometry.scale(2, 2, 2);
-            // // line position === start vector - current start vector
-            // for (var i = 0; i < 2; i++) {
-            //     geometry.vertices[i].x += -10 - -20;
-            //     geometry.vertices[i].y += -2 - -4;
-            //     geometry.vertices[i].z += 0;
-            // }
-            // console.log('before angle', JSON.stringify(geometry.vertices));
-
-            // // ANGLE CHANGE
-            // for (var i = 0; i < 2; i++) {
-            //     geometry.vertices[i].applyAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI/4.0);
-            // }
-            // console.log('after angle', JSON.stringify(geometry.vertices));
-
-            // // USE DISTANCE CHANGE TO ADJUST LINE LENGTH
-            // for (var i = 0; i < 2; i++) {
-            //     geometry.vertices[i].x += -10 - geometry.vertices[0].x;
-            //     geometry.vertices[i].y += 0 - geometry.vertices[0].y;
-            //     geometry.vertices[i].z += 0 - geometry.vertices[0].z;
-            // }
-            // console.log('after position', JSON.stringify(geometry.vertices));
-            
-
-
-            Graphics.scene.add(line);
+            Graphics.scene.add(SphereStyle.line);
 
             SphereStyle.render();
 
@@ -243,12 +219,21 @@
             var avg = total/Audio.frequencyBuckets + 1;
             console.log(avg);
             SphereStyle.setRadius(SphereStyle.centralSphere, avg/10.0);
+            // SphereStyle.setRadius(SphereStyle.centralSphere, 1);
+
+            for (var i = 0; i < Audio.frequencyBuckets; i++) {
+                SphereStyle.line.geometry.vertices[i].x = i;
+                SphereStyle.line.geometry.vertices[i].y = Audio.data[i];
+                SphereStyle.line.geometry.vertices[i].z = 0;
+            }
+            SphereStyle.createLink(SphereStyle.line, new THREE.Vector3(15, 0, 10), new THREE.Vector3(0, 0, 0));
+            SphereStyle.line.geometry.verticesNeedUpdate = true;
         };
 
         SphereStyle.render = function() {
             Graphics._frameID = requestAnimationFrame(SphereStyle.render);
-            // Audio.updateData();
-            // SphereStyle.updateAnimation();
+            Audio.updateData();
+            SphereStyle.updateAnimation();
             Graphics.renderer.render(Graphics.scene, Graphics.camera);
         };
 
