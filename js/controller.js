@@ -87,14 +87,15 @@
 
         // call on load
         (function() {
-            self.currentTrack = JSON.parse(localStorage.currentTrack);
+            self.currentTrack = null;// JSON.parse(localStorage.currentTrack);
             self.trackQueue = JSON.parse(localStorage.trackQueue);
             self.nextTrackAvailable = self.trackQueue.length > 0;
             if (self.currentTrack) {
                 self.selectTrack(self.currentTrack);
             }
             Graphics.init();
-            Graphics.selectStyle(0);
+            Graphics.selectStyle(1);
+            // Graphics.startAnimation();
         }());
 
         $window.onresize = function() {

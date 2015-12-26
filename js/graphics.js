@@ -13,6 +13,7 @@
         Graphics._currentStyle = LINE_STYLE;
         Graphics._styles = [];
         // Animation Styles 
+        // Line
         var LineStyle = {};
         LineStyle._lines = [];
         LineStyle._slideBackLines = [];
@@ -74,8 +75,84 @@
         Graphics._styles[LINE_STYLE] = LineStyle;
 
 
-        // Graphics
+        // Sphere Style
+        const SPHERE_STYLE = 1;
+        var SphereStyle = {};
+        SphereStyle.centralSphere;
+        SphereStyle.lights = [];
+        SphereStyle.lightSphere;
 
+        SphereStyle.init = function() {
+
+            var geometry = new THREE.SphereGeometry( 5, 32, 32 );
+            var material = new THREE.MeshPhongMaterial({ color: 0x555555, specular: 0xffffff, shininess: 50 });
+            SphereStyle.centralSphere = new THREE.Mesh( geometry, material );
+
+            Graphics.scene.add(SphereStyle.centralSphere);
+
+            // set up light points
+            var light;
+            SphereStyle.lightSphere = new THREE.SphereGeometry( 0.5, 16, 8 );
+
+            light = SphereStyle.addLightPoint(0xff0000);
+            light.position.x = -10;
+            light.position.z = 10;
+
+            light = SphereStyle.addLightPoint(0x00ff00);
+            light.position.y = 10;
+            light.position.z = 10;
+
+            light = SphereStyle.addLightPoint(0x0000ff);
+            light.position.y = -10;
+            light.position.z = 10;
+
+            light = SphereStyle.addLightPoint(0xffff00);
+            light.position.x = 10;
+            light.position.z = 10;
+
+            SphereStyle.render();
+
+        };
+
+        SphereStyle.addLightPoint = function(hexColor) {
+            var light = new THREE.PointLight(hexColor, 2, 50); // color, intensity, distance 
+            light.add(new THREE.Mesh(SphereStyle.lightSphere, new THREE.MeshBasicMaterial({ color: hexColor })));
+            Graphics.scene.add(light);
+            SphereStyle.lights.push(light);
+            return light;
+        };
+
+        SphereStyle.calculateScale = function(currentSize, targetSize) {
+            return targetSize/currentSize;
+        };
+
+        SphereStyle.setRadius = function(sphere, radiusSize) {
+            var scale = SphereStyle.calculateScale(sphere.geometry.parameters.radius, radiusSize);
+            sphere.geometry.scale(scale, scale, scale);
+            sphere.geometry.parameters.radius *= scale;
+        };
+
+        SphereStyle.updateAnimation = function() {
+            var total = 0;
+            for (var i = 0; i < Audio.frequencyBuckets; i++) {
+                total += Audio.data[i];
+            }
+            var avg = total/Audio.frequencyBuckets + 1;
+            console.log(avg);
+            SphereStyle.setRadius(SphereStyle.centralSphere, avg/10.0);
+        };
+
+        SphereStyle.render = function() {
+            Graphics._frameID = requestAnimationFrame(SphereStyle.render);
+            Audio.updateData();
+            SphereStyle.updateAnimation();
+            Graphics.renderer.render(Graphics.scene, Graphics.camera);
+        };
+
+        Graphics._styles[SPHERE_STYLE] = SphereStyle;
+
+
+        // Graphics
         Graphics.selectStyle = function(styleID) {
             Graphics._currentStyle = styleID;
         };
