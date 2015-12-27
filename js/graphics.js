@@ -82,9 +82,11 @@
         SphereStyle.lights = [];
         SphereStyle.lightSphere;
         SphereStyle.timeFrequencyLines = [];
+        SphereStyle.particles = [];
 
         SphereStyle.init = function() {
 
+            // set up central sphere
             var geometry = new THREE.SphereGeometry( 5, 32, 32 );
             var material = new THREE.MeshPhongMaterial({ color: 0x555555, specular: 0xffffff, shininess: 50 });
             SphereStyle.centralSphere = new THREE.Mesh( geometry, material );
@@ -95,19 +97,35 @@
             var light;
             SphereStyle.lightSphere = new THREE.SphereGeometry( 0.5, 16, 8 );
 
+            var parent = new THREE.Object3D();
+            Graphics.scene.add(parent);
+
             light = SphereStyle.addLightPoint(0xff0000);
+            parent.add(light);
             light.position.x = -15;
             light.position.z = 10;
 
+            var parent = new THREE.Object3D();
+            Graphics.scene.add(parent);
+
             light = SphereStyle.addLightPoint(0x00ff00);
+            parent.add(light);
             light.position.y = 15;
             light.position.z = 10;
 
+            var parent = new THREE.Object3D();
+            Graphics.scene.add(parent);
+
             light = SphereStyle.addLightPoint(0x0000ff);
+            parent.add(light);
             light.position.y = -15;
             light.position.z = 10;
 
+            var parent = new THREE.Object3D();
+            Graphics.scene.add(parent);
+            
             light = SphereStyle.addLightPoint(0xffff00);
+            parent.add(light);
             light.position.x = 15;
             light.position.z = 10;
 
@@ -130,20 +148,31 @@
                 Graphics.scene.add(line);
             }
 
-            // geometry = new THREE.Geometry();
-            // for (var i = 0; i < Audio.frequencyBuckets; i++) {
-            //     geometry.vertices.push(new THREE.Vector3(i*1, 0, 0));
-            // }
-            // geometry.verticesNeedUpdate = true;
-            // material = new THREE.LineBasicMaterial({color: 0x00ff00});
-            // SphereStyle.line = new THREE.Line(geometry, material);
-
-            // SphereStyle.createLink(SphereStyle.line, new THREE.Vector3(0, 0, 0), new THREE.Vector3(15, 0, 10));
-
-            // Graphics.scene.add(SphereStyle.line);
+            // set up particles 
+            SphereStyle.makeParticles();
 
             SphereStyle.render();
 
+        };
+
+        SphereStyle.makeParticles = function() {
+            var geometry, material, particle, hue;
+
+            for (var i = 0; i < Audio.frequencyBuckets; i++) {
+                // particle 
+                geometry = new THREE.SphereGeometry(2, 8, 8);
+                hue = i/Audio.frequencyBuckets * 360;
+                material = new THREE.MeshBasicMaterial({color: new THREE.Color('hsl(' + hue + ', 100%, 50%)')});
+                particle = new THREE.Mesh( geometry, material );
+
+                particle.position.x = -20;//Math.random() * 800 - 400;
+                particle.position.y = 0;//Math.random() * 800 - 400;
+
+                particle.position.z = -i*2;
+
+                SphereStyle.particles.push(particle);
+                Graphics.scene.add(particle);
+            }
         };
 
         SphereStyle.createLink = function(line, start, end) {
@@ -208,8 +237,10 @@
 
         SphereStyle.addLightPoint = function(hexColor) {
             var light = new THREE.PointLight(hexColor, 2, 50); // color, intensity, distance 
-            light.add(new THREE.Mesh(SphereStyle.lightSphere, new THREE.MeshBasicMaterial({ color: hexColor })));
-            Graphics.scene.add(light);
+            var mesh = new THREE.Mesh(SphereStyle.lightSphere, new THREE.MeshBasicMaterial({ color: hexColor })); 
+            // mesh.position.y = 5;
+            light.add(mesh);
+            // Graphics.scene.add(light);
             SphereStyle.lights.push(light);
             return light;
         };
@@ -224,7 +255,19 @@
             sphere.geometry.parameters.radius *= scale;
         };
 
+        SphereStyle.updateParticles = function() {
+            for (var i = 0; i < SphereStyle.particles.length; i++) {
+                SphereStyle.particles[i].position.z += 1;
+                SphereStyle.particles[i].position.x = Audio.data[i]/10 - 20;
+                if (SphereStyle.particles[i].position.z > 75) {
+                    SphereStyle.particles[i].position.z = -500;
+                }
+            }
+        };
+
         SphereStyle.updateAnimation = function() {
+
+            // UPDATE CENTRAL SPHERE
             var total = 0;
             for (var i = 0; i < Audio.frequencyBuckets; i++) {
                 total += Audio.data[i];
@@ -234,16 +277,24 @@
             SphereStyle.setRadius(SphereStyle.centralSphere, avg/10.0);
             // SphereStyle.setRadius(SphereStyle.centralSphere, 1);
 
+            // UPDATE ORBITING LIGHTS
             for (var i = 0; i < SphereStyle.timeFrequencyLines.length; i++) {
                 for (var j = 0; j < Audio.frequencyBuckets; j++) {
                     SphereStyle.timeFrequencyLines[i].geometry.vertices[j].x = (j/10) - 35;
                     SphereStyle.timeFrequencyLines[i].geometry.vertices[j].y = (Audio.timeData[j]/256.0)*10;
                     SphereStyle.timeFrequencyLines[i].geometry.vertices[j].z = 0;
                 }
-
-                SphereStyle.createLink(SphereStyle.timeFrequencyLines[i], SphereStyle.lights[i].position, new THREE.Vector3(0, 0, 0));    
+                var lightPosition = new THREE.Vector3();
+                lightPosition.setFromMatrixPosition(SphereStyle.lights[i].matrixWorld);
+                SphereStyle.createLink(SphereStyle.timeFrequencyLines[i], lightPosition, new THREE.Vector3(0, 0, 0));    
                 SphereStyle.timeFrequencyLines[i].geometry.verticesNeedUpdate = true;
+
+                SphereStyle.lights[i].parent.rotation.z += 0.01;
+                SphereStyle.lights[i].parent.rotation.x += 0.001;
+                SphereStyle.lights[i].parent.rotation.y -= 0.001;
             }
+
+            SphereStyle.updateParticles();
             
         };
 
