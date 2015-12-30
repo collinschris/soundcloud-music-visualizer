@@ -77,14 +77,17 @@
 
         // Sphere Style
         const SPHERE_STYLE = 1;
+        const GROUP_SIZE = 20;
         var SphereStyle = {};
         SphereStyle.centralSphere;
         SphereStyle.lights = [];
         SphereStyle.lightSphere;
         SphereStyle.timeFrequencyLines = [];
-        SphereStyle.particles = [];
+        SphereStyle.particleGroups = [];
+        SphereStyle.isInitialized = false;
 
         SphereStyle.init = function() {
+            if (SphereStyle.isInitialized) return;
 
             // set up central sphere
             var geometry = new THREE.SphereGeometry( 5, 32, 32 );
@@ -103,7 +106,6 @@
             light = SphereStyle.addLightPoint(0xff0000);
             parent.add(light);
             light.position.x = -15;
-            light.position.z = 10;
 
             var parent = new THREE.Object3D();
             Graphics.scene.add(parent);
@@ -111,7 +113,6 @@
             light = SphereStyle.addLightPoint(0x00ff00);
             parent.add(light);
             light.position.y = 15;
-            light.position.z = 10;
 
             var parent = new THREE.Object3D();
             Graphics.scene.add(parent);
@@ -119,7 +120,6 @@
             light = SphereStyle.addLightPoint(0x0000ff);
             parent.add(light);
             light.position.y = -15;
-            light.position.z = 10;
 
             var parent = new THREE.Object3D();
             Graphics.scene.add(parent);
@@ -127,9 +127,21 @@
             light = SphereStyle.addLightPoint(0xffff00);
             parent.add(light);
             light.position.x = 15;
-            light.position.z = 10;
 
-            console.log(light);
+            var parent = new THREE.Object3D();
+            Graphics.scene.add(parent);
+            
+            light = SphereStyle.addLightPoint(0xff33cc);
+            parent.add(light);
+            light.position.z = -15;
+
+
+            var parent = new THREE.Object3D();
+            Graphics.scene.add(parent);
+            
+            light = SphereStyle.addLightPoint(0x00ccff);
+            parent.add(light);
+            light.position.z = 15;
 
             // set up sound time lines
             var line;
@@ -149,30 +161,43 @@
             }
 
             // set up particles 
-            SphereStyle.makeParticles();
+            SphereStyle.makeParticleGroups();
 
             SphereStyle.render();
 
+            SphereStyle.isInitialized = true;
+
         };
 
-        SphereStyle.makeParticles = function() {
-            var geometry, material, particle, hue;
+        SphereStyle.makeParticleGroups = function() {
+            var nGroups = Math.floor(Audio.frequencyBuckets/GROUP_SIZE);
+            var geometry, material, particle, hue, group;
 
-            for (var i = 0; i < Audio.frequencyBuckets; i++) {
-                // particle 
-                geometry = new THREE.SphereGeometry(2, 8, 8);
-                hue = i/Audio.frequencyBuckets * 360;
-                material = new THREE.MeshBasicMaterial({color: new THREE.Color('hsl(' + hue + ', 100%, 50%)')});
-                particle = new THREE.Mesh( geometry, material );
+            for (var i = 0; i < nGroups; i++) {
+                group = new THREE.Object3D();
+                group.position.x = Math.random() * 400 - 200;
+                group.position.y = Math.random() * 400 - 200;
+                group.position.z = -i * 20;
+                Graphics.scene.add(group);
 
-                particle.position.x = -20;//Math.random() * 800 - 400;
-                particle.position.y = 0;//Math.random() * 800 - 400;
+                for (var j = 0; j < GROUP_SIZE; j++) {
+                    // particle 
+                    geometry = new THREE.SphereGeometry(2, 8, 8);
+                    hue = (i * GROUP_SIZE + j)/Audio.frequencyBuckets * 360;
+                    material = new THREE.MeshBasicMaterial({color: new THREE.Color('hsl(' + hue + ', 100%, 50%)')});
+                    particle = new THREE.Mesh( geometry, material );
 
-                particle.position.z = -i*2;
+                    particle.position.x = Math.random() * 2 - 1;
+                    particle.position.y = Math.random() * 2 - 1;
+                    particle.position.z = Math.random() * 2 - 1;
+                    particle.position.normalize();
 
-                SphereStyle.particles.push(particle);
-                Graphics.scene.add(particle);
+                    group.add(particle);
+                }    
+
+                SphereStyle.particleGroups.push(group);
             }
+
         };
 
         SphereStyle.createLink = function(line, start, end) {
@@ -255,12 +280,16 @@
             sphere.geometry.parameters.radius *= scale;
         };
 
-        SphereStyle.updateParticles = function() {
-            for (var i = 0; i < SphereStyle.particles.length; i++) {
-                SphereStyle.particles[i].position.z += 1;
-                SphereStyle.particles[i].position.x = Audio.data[i]/10 - 20;
-                if (SphereStyle.particles[i].position.z > 75) {
-                    SphereStyle.particles[i].position.z = -500;
+        SphereStyle.updateParticleGroups = function() {
+            // TODO: update particle groups
+            for (var i = 0; i < SphereStyle.particleGroups.length; i++) {
+                SphereStyle.particleGroups[i].position.z += 1;
+                if (SphereStyle.particleGroups[i].position.z > 75) {
+                    SphereStyle.particleGroups[i].position.z = -500;
+                }
+                // update elements of group
+                for (var j = 0; j < GROUP_SIZE; j++) {
+                    SphereStyle.particleGroups[i].children[j].position.normalize().multiplyScalar(Audio.data[i * GROUP_SIZE + j] + 1);
                 }
             }
         };
@@ -273,9 +302,7 @@
                 total += Audio.data[i];
             }
             var avg = total/Audio.frequencyBuckets + 1;
-            // console.log(avg);
             SphereStyle.setRadius(SphereStyle.centralSphere, avg/10.0);
-            // SphereStyle.setRadius(SphereStyle.centralSphere, 1);
 
             // UPDATE ORBITING LIGHTS
             for (var i = 0; i < SphereStyle.timeFrequencyLines.length; i++) {
@@ -294,7 +321,7 @@
                 SphereStyle.lights[i].parent.rotation.y -= 0.001;
             }
 
-            SphereStyle.updateParticles();
+            SphereStyle.updateParticleGroups();
             
         };
 
@@ -320,7 +347,7 @@
             // TODO: don't add if already there
             document.getElementById('canvas-wrapper').appendChild(Graphics.renderer.domElement);
             // position camera 
-            Graphics.camera.position.y = 0;
+            Graphics.camera.position.y = 15;
             Graphics.camera.position.z = 30;
             Graphics.camera.lookAt(new THREE.Vector3(0, 0, 0));
         };
