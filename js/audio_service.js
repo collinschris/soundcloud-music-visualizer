@@ -10,7 +10,7 @@
         AudioPlayer.src; 
         AudioPlayer.analyser;
         AudioPlayer.frequencyBuckets = 512;
-        AudioPlayer.data = new Uint8Array(AudioPlayer.frequencyBuckets);
+        AudioPlayer.freqData = new Uint8Array(AudioPlayer.frequencyBuckets);
         AudioPlayer.timeData = new Uint8Array(AudioPlayer.frequencyBuckets);
         AudioPlayer.configured = false;
 
@@ -61,8 +61,8 @@
             AudioPlayer.configured = true;
         };
 
-        AudioPlayer.updateData = function() {
-            AudioPlayer.analyser.getByteFrequencyData(AudioPlayer.data);
+        AudioPlayer.updateFreqData = function() {
+            AudioPlayer.analyser.getByteFrequencyData(AudioPlayer.freqData);
         };
 
         AudioPlayer.updateTimeData = function() {

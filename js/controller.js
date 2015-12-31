@@ -85,6 +85,10 @@
             // TODO: display some message to user
         }); 
 
+        $window.onresize = function() {
+            Graphics.updateCanvasSize($window.innerWidth, $window.innerHeight);
+        };
+
         // call on load
         (function() {
             self.currentTrack = null;// JSON.parse(localStorage.currentTrack);
@@ -94,13 +98,9 @@
                 self.selectTrack(self.currentTrack);
             }
             Graphics.init();
-            Graphics.selectStyle(1);
+            Graphics.selectStyle(0);
             // Graphics.startAnimation();
         }());
-
-        $window.onresize = function() {
-            Graphics.updateCanvasSize($window.innerWidth, $window.innerHeight);
-        };
 
     }]);
         

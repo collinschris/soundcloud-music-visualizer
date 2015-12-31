@@ -8,6 +8,7 @@
         'musicVizController',
         'soundcloudAPI',
         'Audio',
+        'GraphicsHelper',
         'Graphics',
         'Filters'
     ]);
@@ -19,7 +20,8 @@
     angular.module('musicVizController', []);
     angular.module('soundcloudAPI', []);
     angular.module('Audio', []);
-    angular.module('Graphics', []);
+    angular.module('GraphicsHelper', []);
+    angular.module('Graphics', ['GraphicsHelper']);
     angular.module('Filters', []);
 
 }());
