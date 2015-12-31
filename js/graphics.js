@@ -18,39 +18,8 @@
         LineStyle.lines = [];
         LineStyle.nLines = 203;
 
-        var mirrorCube, mirrorCubeCamera;
-    
         LineStyle.makeLines = function() {
             var geometry, material, line;
-
-            var light = new THREE.AmbientLight( 0xffffff ); // soft white light
-            Graphics.scene.add( light );
-
-            var cubeGeom = new THREE.CubeGeometry(100, 1, 200, 1, 1, 1);
-            mirrorCubeCamera = new THREE.CubeCamera( 0.1, 5000, 512 );
-            // mirrorCubeCamera.renderTarget.minFilter = THREE.LinearMipMapLinearFilter;
-            Graphics.scene.add( mirrorCubeCamera );
-            var mirrorCubeMaterial = new THREE.MeshBasicMaterial( { envMap: mirrorCubeCamera.renderTarget } );
-            mirrorCube = new THREE.Mesh( cubeGeom, mirrorCubeMaterial );
-            mirrorCube.position.set(0,-60,20);
-            mirrorCubeCamera.position.x = mirrorCube.position.x;
-            mirrorCubeCamera.position.y = mirrorCube.position.y;
-            mirrorCubeCamera.position.z = mirrorCube.position.z;
-            Graphics.scene.add(mirrorCube);  
-
-            // var cubeCamera = new THREE.CubeCamera( 1, 100000, 128 );
-            // Graphics.scene.add( cubeCamera );
-
-            // var geometry = new THREE.PlaneGeometry( 5, 5, 32 );
-            // // var material = new THREE.MeshBasicMaterial( {color: 0xffff00, side: THREE.DoubleSide} );
-            // var material = new THREE.MeshBasicMaterial( {envMap: cubeCamera.renderTarget} );
-            // var plane = new THREE.Mesh( geometry, material );
-            // plane.position.y = -5;
-            // plane.rotation.x = Math.PI/2;
-            // cubeCamera.position.x = plane.position.x;
-            // cubeCamera.position.y = plane.position.y;
-            // cubeCamera.position.z = plane.position.z;
-            // Graphics.scene.add( plane );
 
             for (var i = 0; i < LineStyle.nLines; i++) {
                 geometry = new THREE.Geometry();
@@ -58,8 +27,7 @@
                     geometry.vertices.push(new THREE.Vector3((j/8) - 32, 0, -410));
                 }
                 geometry.verticesNeedUpdate = true;
-                // material = new THREE.LineBasicMaterial({color: 0x00ff00});
-                material = new THREE.MeshLambertMaterial({color: 0x00ff00});
+                material = new THREE.LineBasicMaterial({color: 0x00ff00});
                 line = new THREE.Line(geometry, material);
                 LineStyle.lines.push(line);
                 Graphics.scene.add(line);    
@@ -91,12 +59,6 @@
             Graphics.frameID = requestAnimationFrame(LineStyle.render);
             Audio.updateFreqData();
             LineStyle.updateLines();
-
-            mirrorCube.visible = false;
-            mirrorCubeCamera.updateCubeMap( Graphics.renderer, Graphics.scene );
-            mirrorCube.visible = true;
-
-
             Graphics.renderer.render(Graphics.scene, Graphics.camera);
         };
 
