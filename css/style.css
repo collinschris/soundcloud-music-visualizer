@@ -1,7 +1,7 @@
 body {
-  /*background-color: #000000;*/
+  background-color: #000000;
   margin: 0px;
-  /*overflow: hidden;*/
+  overflow: hidden;
 }
 
 canvas {
@@ -32,10 +32,6 @@ nav label {
 
 .list-group li {
   color: black;
-}
-
-footer {
-  background-color: black;
 }
 
 p {

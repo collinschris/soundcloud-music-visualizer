@@ -64,6 +64,12 @@
             localStorage.setItem('trackQueue', JSON.stringify(self.trackQueue));
         };
 
+        self.selectStyle = function(styleID) {
+            Graphics.stopAnimation();
+            Graphics.selectStyle(styleID);
+            Graphics.startAnimation();
+        };
+
         $scope.$watch(function() { return self.searchQuery; }, function(query) {
             self.handleMouseMove(); // preven menu from hidding while typing 
             // search if done typing
@@ -91,7 +97,8 @@
 
         // call on load
         (function() {
-            self.currentTrack = null;// JSON.parse(localStorage.currentTrack);
+            // TODO: finish local storage currentTrack
+            self.currentTrack = null;//JSON.parse(localStorage.currentTrack);
             self.trackQueue = JSON.parse(localStorage.trackQueue);
             self.nextTrackAvailable = self.trackQueue.length > 0;
             if (self.currentTrack) {
@@ -99,7 +106,6 @@
             }
             Graphics.init();
             Graphics.selectStyle(0);
-            // Graphics.startAnimation();
         }());
 
     }]);

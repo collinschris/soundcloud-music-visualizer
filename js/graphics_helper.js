@@ -80,6 +80,12 @@
             return total/arr.length;
         };
 
+        GraphicsHelper.clearScene = function(scene) {
+            while (scene.children.length > 0) {
+                scene.remove(scene.children.pop());
+            }
+        };
+
         return GraphicsHelper;
     }]);
 

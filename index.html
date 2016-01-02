@@ -18,7 +18,6 @@
 
       <!-- style -->
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-      <!-- <link href='https://fonts.googleapis.com/css?family=Roboto+Mono' rel='stylesheet' type='text/css'> -->
       <link rel="stylesheet" type="text/css" href="css/style.css">
       
     </head>
@@ -34,6 +33,8 @@
               <input ng-model="ctrl.searchQuery" type="text" class="form-control" id="search-soundcloud" placeholder="Kanye West">
             </div>
           </form>
+          <button class="btn btn-default" ng-click="ctrl.selectStyle(0)">Style 0</button>
+          <button class="btn btn-default" ng-click="ctrl.selectStyle(1)">Style 1</button>
         </nav>
 
         <div ng-show="ctrl.showMenus" class="static" id="search-results">
@@ -61,19 +62,23 @@
 
         <div id="canvas-wrapper"></div>
 
-        <footer ng-show="ctrl.showMenus">
+        <nav ng-show="ctrl.showMenus" class="navbar navbar-inverse navbar-fixed-bottom">
           <div class="container">
             <div class="row">
-              <p>{{ ctrl.currentTrack ? ctrl.currentTrack.title + ' by ' + ctrl.currentTrack.user.username : '' }}</p>
-            </div>
-            <div class="row">
-              <div class="col-md-offset-4 col-md-4" id="audio-wrapper"></div>
-              <button ng-click="ctrl.nextTrack()" 
-                      ng-disabled="!ctrl.nextTrackAvailable"
-                      class="col-md-1 btn btn-default"><span class="glyphicon glyphicon-forward"></span></button>
+                <div class="col-md-4">
+                  <p>{{ ctrl.currentTrack ? ctrl.currentTrack.user.username + ' -- ' + ctrl.currentTrack.title : '' }}</p>
+                </div>
+                <div class="col-md-4" id="audio-wrapper">
+                  <audio preload="auto" crossorigin="anonymous" src="#" controls autoplay id="player"></audio>
+                </div>
+                <button ng-click="ctrl.nextTrack()" 
+                        ng-disabled="!ctrl.nextTrackAvailable"
+                        class="col-md-1 btn btn-default"><span class="glyphicon glyphicon-forward"></span>
+                </button>
+              </div>
             </div>
           </div>
-        </footer>
+        </nav>
 
       </div>
     </body>

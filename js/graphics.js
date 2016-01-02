@@ -15,8 +15,6 @@
         // Animation Styles 
         // Line
         var LineStyle = {};
-        LineStyle.lines = [];
-        LineStyle.nLines = 203;
 
         LineStyle.makeLines = function() {
             var geometry, material, line;
@@ -56,6 +54,7 @@
         };
         
         LineStyle.render = function() {
+            console.log(LineStyle.lines.length);
             Graphics.frameID = requestAnimationFrame(LineStyle.render);
             Audio.updateFreqData();
             LineStyle.updateLines();
@@ -63,6 +62,9 @@
         };
 
         LineStyle.init = function() {
+            LineStyle.lines = [];
+            LineStyle.nLines = 203;
+
             // position camera
             Graphics.camera.position.x = 0;
             Graphics.camera.position.y = 15;
@@ -81,15 +83,16 @@
         const SPHERE_STYLE = 1;
         const GROUP_SIZE = 20;
         var SphereStyle = {};
-        SphereStyle.centralSphere;
-        SphereStyle.lights = [];
-        SphereStyle.lightSphere;
-        SphereStyle.timeFrequencyLines = [];
-        SphereStyle.particleGroups = [];
         SphereStyle.isInitialized = false;
 
         SphereStyle.init = function() {
             if (SphereStyle.isInitialized) return;
+
+            SphereStyle.centralSphere;
+            SphereStyle.lights = [];
+            SphereStyle.lightSphere;
+            SphereStyle.timeFrequencyLines = [];
+            SphereStyle.particleGroups = [];
 
             // position camera 
             Graphics.camera.position.x = 0;
@@ -299,6 +302,8 @@
         
         Graphics.stopAnimation = function() {
             cancelAnimationFrame(Graphics.frameID);
+            GH.clearScene(Graphics.scene);
+            Graphics.styles[SPHERE_STYLE].isInitialized = false;
         };
 
         return Graphics;
