@@ -1,6 +1,7 @@
 (function () {
     'use strict';
 
+    // display message to DOM
     angular.module('Alert').factory('Alert', ['$timeout', '$compile', function($timeout, $compile) {
 
         return {

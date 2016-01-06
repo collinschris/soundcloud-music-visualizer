@@ -2,6 +2,7 @@
     'use strict';
 
     angular.module('GraphicsHelper').factory('GraphicsHelper', [function() {
+        // helper methods for graphics service 
         var GraphicsHelper = {};
 
         GraphicsHelper.dotProduct = function(vecA, vecB) {
@@ -16,9 +17,8 @@
         };
   
         GraphicsHelper.calculateAxisAngle = function(start, end) {
-            // TODO: make this more efficient
             // subtract to get directional vector
-            // use unit vector [1, 0, 0]
+            // use unit vector [1, 0, 0] for axis rotation
             var directionVector = new THREE.Vector3();
             directionVector.subVectors(end, start).normalize();
             var angle = Math.acos(GraphicsHelper.dotProduct(directionVector, new THREE.Vector3(1, 0, 0)));
@@ -39,14 +39,7 @@
 
         GraphicsHelper.createLink = function(line, start, end) {
             // add line from start to end
-            // 1) set angle
-                // calculate angle
-                // set angle with vertex.applyAxisAngle
-            // 2) set length
-                // calculate scale
-                // use line.scale
-            // 3) adjust position 
-                // vertex += start - currentStart
+
             // ANGLE
             var axisAngle = GraphicsHelper.calculateAxisAngle(start, end);
             for (var i = 0; i < line.geometry.vertices.length; i++) {
@@ -57,7 +50,6 @@
             var targetDist = GraphicsHelper.distance(start, end);
             var scale = GraphicsHelper.calculateScale(currDist, targetDist);
             line.geometry.scale(scale, scale, scale);
-
 
             // POSITION            
             var currentStart = {};

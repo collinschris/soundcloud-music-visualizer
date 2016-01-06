@@ -52,6 +52,7 @@
                 $compile(trackInfoElem)(scope);
 
                 scope.$watch(function() { return scope.elemClasses; }, function() {
+                    // update classes
                     scope.classStr = '';
                     if (!scope.elemClasses) return;
                     for (var i = 0; i < scope.elemClasses.length; i++) {
@@ -70,10 +71,12 @@
             restrict: 'A',
             scope: {},
             link: function(scope, element, attrs) {
+                // improves ui
                 var key = {left: 37, up: 38, right: 39, down: 40 , enter: 13, esc: 27, tab: 9};
                 var searchResultList = document.getElementById('autocomplete-search-results');
                 var searchBar = document.getElementById('search-soundcloud');
 
+                // escape dropdown soundcloud search
                 document.addEventListener('keydown', function(e) {
                     var keycode = e.keyCode || e.which;
 
@@ -83,6 +86,7 @@
                     }
                 }, true);
 
+                // escape dropdown soundcloud search 
                 document.addEventListener('blur', function(e){
                     // disable suggestions on blur
                     setTimeout(function() {
@@ -90,14 +94,15 @@
                     }, 150);
                   }, true);
 
+                // show dropdown soundcloud search
                 element[0].addEventListener('mouseenter', function(e) {
                     searchResultList.classList.remove('ng-hide');
                 });
 
+                // highlight text in search bar
                 searchBar.addEventListener('focus', function(e) {
                     searchBar.select();
                 }, true);
-
             }
 
         }

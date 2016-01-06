@@ -2,7 +2,7 @@
 
     'use strict';
 
-    /* backend */
+    /* connects audio nodes for playback and music viz */
     angular.module('Audio').factory('Audio', ['$rootScope', function($rootScope) {
         var AudioPlayer = {};
         AudioPlayer.audioElem;
