@@ -23,13 +23,13 @@
             } else {
                 SC.search(query).then(function(response) {
                     self.searchResults = response.data;
-                    console.log(JSON.stringify(self.searchResults));
                 });
             }
         };
 
         self.selectTrack = function(track) {
             Audio.loadTrack(track.stream_url + '?client_id=' + CLIENT_ID, true);
+            Graphics.stopAnimation();
             Graphics.startAnimation();
             self.currentTrack = track;
             localStorage.setItem('currentTrack', JSON.stringify(self.currentTrack));
@@ -37,7 +37,6 @@
 
         self.addToTrackQueue = function(track) {
             self.trackQueue.push(track);
-            console.log('song added to queue');
             if (self.trackQueue.length === 1 && !Audio.configured) {
                 self.selectTrack(self.trackQueue.shift());
             }
@@ -56,7 +55,6 @@
         self.nextTrack = function() {
             self.currentTrack = null;
             if (self.trackQueue.length > 0) {
-                console.log('next track from queue');
                 self.selectTrack(self.trackQueue.shift());
             } 
             self.nextTrackAvailable = self.trackQueue.length > 0;
