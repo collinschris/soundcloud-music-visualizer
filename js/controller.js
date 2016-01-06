@@ -6,7 +6,7 @@
     /* Controllers */
     var controller = angular.module('musicVizController');
 
-    controller.controller('musicVizController', ['$scope', '$timeout', 'soundcloudAPI', 'Audio', 'Graphics', '$window', function($scope, $timeout, SC, Audio, Graphics, $window) {
+    controller.controller('musicVizController', ['$scope', '$timeout', 'soundcloudAPI', 'Audio', 'Graphics', '$window', 'Alert', function($scope, $timeout, SC, Audio, Graphics, $window, Alert) {
         var self = this;
         self.searchQuery = '';
         self.searchResults = [];
@@ -15,6 +15,7 @@
         self.mouseTimeout;
         self.currentTrack = null;
         self.nextTrackAvailable = false;
+        self.currentStyle = 0;
 
         self.search = function(query) {
             if (query === '') {
@@ -22,14 +23,12 @@
             } else {
                 SC.search(query).then(function(response) {
                     self.searchResults = response.data;
+                    console.log(JSON.stringify(self.searchResults));
                 });
             }
         };
 
         self.selectTrack = function(track) {
-            console.log(track);
-            self.searchQuery = '';
-            self.searchResults = [];
             Audio.loadTrack(track.stream_url + '?client_id=' + CLIENT_ID, true);
             Graphics.startAnimation();
             self.currentTrack = track;
@@ -65,13 +64,14 @@
         };
 
         self.selectStyle = function(styleID) {
+            self.currentStyle = styleID;
             Graphics.stopAnimation();
-            Graphics.selectStyle(styleID);
+            Graphics.selectStyle(self.currentStyle);
             Graphics.startAnimation();
         };
 
         $scope.$watch(function() { return self.searchQuery; }, function(query) {
-            self.handleMouseMove(); // preven menu from hidding while typing 
+            self.handleMouseMove(); // prevent menu from hidding while typing 
             // search if done typing
             $timeout(function() {
                 if (query === self.searchQuery) {
@@ -89,6 +89,7 @@
             Audio.loadTrack(self.currentTrack.stream_url + '?client_id=' + CLIENT_ID, false);
             Graphics.stopAnimation();
             // TODO: display some message to user
+            // Alert.error('This song cannot be played');
         }); 
 
         $window.onresize = function() {
@@ -99,14 +100,17 @@
         (function() {
             // TODO: finish local storage currentTrack
             self.currentTrack = null;//JSON.parse(localStorage.currentTrack);
-            self.trackQueue = JSON.parse(localStorage.trackQueue);
+            self.trackQueue = [];//JSON.parse(localStorage.trackQueue);
             self.nextTrackAvailable = self.trackQueue.length > 0;
             if (self.currentTrack) {
                 self.selectTrack(self.currentTrack);
             }
             Graphics.init();
-            Graphics.selectStyle(0);
+            Graphics.selectStyle(self.currentStyle);
         }());
+          
+
+        // Alert.error('This song cannot be played');
 
     }]);
         

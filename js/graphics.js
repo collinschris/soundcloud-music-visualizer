@@ -54,7 +54,6 @@
         };
         
         LineStyle.render = function() {
-            console.log(LineStyle.lines.length);
             Graphics.frameID = requestAnimationFrame(LineStyle.render);
             Audio.updateFreqData();
             LineStyle.updateLines();

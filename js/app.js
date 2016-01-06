@@ -10,7 +10,9 @@
         'Audio',
         'GraphicsHelper',
         'Graphics',
-        'Filters'
+        'Filters',
+        'musicVizDirectives',
+        'Alert'
     ]);
 
 
@@ -23,5 +25,7 @@
     angular.module('GraphicsHelper', []);
     angular.module('Graphics', ['GraphicsHelper']);
     angular.module('Filters', []);
+    angular.module('musicVizDirectives', []);
+    angular.module('Alert', []);
 
 }());

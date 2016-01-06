@@ -8,6 +8,7 @@
       <!-- script -->
       <script src="libs/three.min.js" defer></script>
       <script src="libs/angularjs-1.3.14-angular.min.js" defer></script>
+      <script src="libs/jquery-2.1.4.min.js" defer></script>
       <script src="js/app.js" defer></script>
       <script src="js/controller.js" defer></script>
       <script src="js/soundcloud_service.js" defer></script>
@@ -15,9 +16,11 @@
       <script src="js/graphics_helper.js" defer></script>
       <script src="js/graphics.js" defer></script>
       <script src="js/filters.js" defer></script>
+      <script src="js/directives.js" defer></script>
+      <script src="js/alert.js" defer></script>
 
       <!-- style -->
-      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+      <link rel="stylesheet" type="text/css" href="libs/bootstrap-3.3.5-dist/css/bootstrap.min.css">
       <link rel="stylesheet" type="text/css" href="css/style.css">
       
     </head>
@@ -26,56 +29,66 @@
       <div ng-mousemove="ctrl.handleMouseMove()">
 
         <nav ng-show="ctrl.showMenus" class="navbar navbar-inverse navbar-fixed-top">
-          <form class="navbar-form navbar-left" role="search">
-            <div class="form-group">
+          <div class="container-fluid">
+
+            <div class="col-md-1">
               <!-- TODO: replace with SoundCloud logo -->
               <label for="search-soundcloud">Search SoundCloud</label> 
-              <input ng-model="ctrl.searchQuery" type="text" class="form-control" id="search-soundcloud" placeholder="Kanye West">
             </div>
-          </form>
-          <button class="btn btn-default" ng-click="ctrl.selectStyle(0)">Style 0</button>
-          <button class="btn btn-default" ng-click="ctrl.selectStyle(1)">Style 1</button>
+
+            <div class="col-md-5">
+              <div class="autocomplete" key-controls>
+                <input ng-model="ctrl.searchQuery" type="text" class="form-control" id="search-soundcloud" placeholder="Kanye West">
+                <ul id="autocomplete-search-results">
+                  <li ng-repeat="result in ctrl.searchResults | streamable"
+                      ng-mouseenter="hovering=true"
+                      ng-mouseleave="hovering=false"
+                      ng-class="{'highlight':hovering}">
+                    <div class="row">
+                      <div class="col-md-9">
+                        <track track="result" elem-classes="['img-small']" inline="true"></track>
+                      </div>
+                      <div class="pull-right" style="padding-right:1em;">
+                        <button ng-click="ctrl.selectTrack(result)" class="btn btn-small btn-default"><span class="glyphicon glyphicon-play"></span></button>
+                        <button ng-click="ctrl.addToTrackQueue(result)" class="btn btn-small btn-default"><span class="glyphicon glyphicon-plus"></span></button>
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <ul class="nav navbar-nav">
+                <li><p class="navbar-text">Animation Styles:</p></li>
+                <li ng-class="{'active': ctrl.currentStyle == 0}" ng-click="ctrl.selectStyle(0)"><a href="#">Lines</a></li>
+                <li ng-class="{'active': ctrl.currentStyle == 1}" ng-click="ctrl.selectStyle(1)"><a href="#">Spheres</a></li>
+              </ul>
+            </div>
+
+          </div>
         </nav>
 
-        <div ng-show="ctrl.showMenus" class="static" id="search-results">
-          <ul class="list-group">
-            <!-- TODO: add filter for longer names -->
-            <li ng-class="{'list-group-item':true, 'active':hovering}" 
-                ng-mouseenter="hovering=true"
-                ng-mouseleave="hovering=false"
-                ng-repeat="result in ctrl.searchResults | streamable">
+        <div></div>
 
-                {{ result.title }}
-                <div class="pull-right">
-                  <button ng-click="ctrl.selectTrack(result)" class="btn btn-small btn-default"><span class="glyphicon glyphicon-play"></span></button>
-                  <button ng-click="ctrl.addToTrackQueue(result)" class="btn btn-small btn-default"><span class="glyphicon glyphicon-plus"></span></button>
-                </div>
-            </li>
-          </ul>
-        </div>
 
         <div ng-show="ctrl.showMenus" class="static" id="track-queue">
-          <p style="color: white;">Track Queue:</p>
-          <!-- TODO: add track directive with picture thumbnail and artist info -->
-          <p ng-repeat="track in ctrl.trackQueue track by $index" style="color: white;">{{ track.title + ', ' + track.user.username }}</p>
+          <p>Track Queue:</p>
+          <track ng-repeat="track in ctrl.trackQueue track by $index" elem-classes="['img-small', 'light-text']" inline="true" track="track"></track>
         </div>
 
         <div id="canvas-wrapper"></div>
 
         <nav ng-show="ctrl.showMenus" class="navbar navbar-inverse navbar-fixed-bottom">
-          <div class="container">
-            <div class="row">
-                <div class="col-md-4">
-                  <p>{{ ctrl.currentTrack ? ctrl.currentTrack.user.username + ' -- ' + ctrl.currentTrack.title : '' }}</p>
-                </div>
-                <div class="col-md-4" id="audio-wrapper">
-                  <audio preload="auto" crossorigin="anonymous" src="#" controls autoplay id="player"></audio>
-                </div>
-                <button ng-click="ctrl.nextTrack()" 
-                        ng-disabled="!ctrl.nextTrackAvailable"
-                        class="col-md-1 btn btn-default"><span class="glyphicon glyphicon-forward"></span>
-                </button>
+          <div id="audio-nav-elems">
+              <track class="col-md-4" elem-classes="['img-medium']" track="ctrl.currentTrack"></track>
+              <div class="col-md-4" id="audio-wrapper">
+                <audio preload="auto" crossorigin="anonymous" src="#" controls autoplay id="player"></audio>
               </div>
+              <button ng-click="ctrl.nextTrack()" 
+                      ng-disabled="!ctrl.nextTrackAvailable"
+                      class="col-md-1 btn btn-default"><span class="glyphicon glyphicon-forward"></span>
+              </button>
             </div>
           </div>
         </nav>
