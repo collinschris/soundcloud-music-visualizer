@@ -15,7 +15,6 @@
         AudioPlayer.configured = false;
 
         AudioPlayer.loadTrack = function(trackURL, useAnalyser) {
-            console.log('loading track... with analyser:', useAnalyser);
             if (useAnalyser) AudioPlayer.checkStreamability(trackURL);
             if (document.getElementById('player')) {
                 document.getElementById('audio-wrapper').removeChild(document.getElementById('player'));            
@@ -38,7 +37,6 @@
               req.responseType = "arraybuffer"; 
               req.onreadystatechange = function() {
                 if (req.readyState === 4 && req.status === 0) {
-                    console.log('this song is not capatible with Web Audio');
                     $rootScope.$broadcast('noTrackAnalyser');
                 }
               }; 
@@ -50,8 +48,7 @@
         };
 
         AudioPlayer.configNodes = function() {
-            console.log('configuring nodes');
-            AudioPlayer.ctx = new AudioContext();
+            if (!AudioPlayer.ctx) AudioPlayer.ctx = new AudioContext(); // only need 1 audio context obj
             AudioPlayer.analyser = AudioPlayer.ctx.createAnalyser();
             AudioPlayer.analyser.fftSize = AudioPlayer.frequencyBuckets*2;
             AudioPlayer.src = AudioPlayer.ctx.createMediaElementSource(AudioPlayer.audioElem);

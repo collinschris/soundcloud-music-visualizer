@@ -72,6 +72,7 @@
             link: function(scope, element, attrs) {
                 var key = {left: 37, up: 38, right: 39, down: 40 , enter: 13, esc: 27, tab: 9};
                 var searchResultList = document.getElementById('autocomplete-search-results');
+                var searchBar = document.getElementById('search-soundcloud');
 
                 document.addEventListener('keydown', function(e) {
                     var keycode = e.keyCode || e.which;
@@ -82,7 +83,7 @@
                     }
                 }, true);
 
-                document.addEventListener("blur", function(e){
+                document.addEventListener('blur', function(e){
                     // disable suggestions on blur
                     setTimeout(function() {
                         searchResultList.classList.add('ng-hide');        
@@ -93,6 +94,9 @@
                     searchResultList.classList.remove('ng-hide');
                 });
 
+                searchBar.addEventListener('focus', function(e) {
+                    searchBar.select();
+                }, true);
 
             }
 

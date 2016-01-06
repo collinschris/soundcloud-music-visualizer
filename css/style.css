@@ -69,6 +69,14 @@ p {
   color: white;
 }
 
+#error-wrapper {
+  margin-top: 6em;
+  width: 100%;
+}
+
+.top-padding-sm {
+  padding-top: 0.5em;
+}
 /* AUTOCOMPLETE */
 
 .autocomplete{

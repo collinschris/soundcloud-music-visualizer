@@ -28,6 +28,7 @@
         };
 
         self.selectTrack = function(track) {
+            Alert.removeError();
             Audio.loadTrack(track.stream_url + '?client_id=' + CLIENT_ID, true);
             Graphics.stopAnimation();
             Graphics.startAnimation();
@@ -63,6 +64,7 @@
 
         self.selectStyle = function(styleID) {
             self.currentStyle = styleID;
+            localStorage.setItem('currentStyle', JSON.stringify(self.currentStyle));
             Graphics.stopAnimation();
             Graphics.selectStyle(self.currentStyle);
             Graphics.startAnimation();
@@ -79,6 +81,8 @@
         }, true);
 
         $scope.$on('trackFinished', function(event) {
+            self.currentTrack = null;
+            localStorage.setItem('currentTrack', JSON.stringify(self.currentTrack));
             self.nextTrack();
             $scope.$apply();
         });
@@ -86,8 +90,7 @@
         $scope.$on('noTrackAnalyser', function(event) {
             Audio.loadTrack(self.currentTrack.stream_url + '?client_id=' + CLIENT_ID, false);
             Graphics.stopAnimation();
-            // TODO: display some message to user
-            // Alert.error('This song cannot be played');
+            Alert.error('Sorry! SoundCloud does not allow this song to be visualized.');
         }); 
 
         $window.onresize = function() {
@@ -96,19 +99,16 @@
 
         // call on load
         (function() {
-            // TODO: finish local storage currentTrack
-            self.currentTrack = null;//JSON.parse(localStorage.currentTrack);
-            self.trackQueue = [];//JSON.parse(localStorage.trackQueue);
+            self.currentTrack = localStorage.currentTrack ? JSON.parse(localStorage.currentTrack) : null;
+            self.trackQueue = localStorage.trackQueue ? JSON.parse(localStorage.trackQueue) : [];
+            self.currentStyle = localStorage.currentStyle ? JSON.parse(localStorage.currentStyle) : 0;
             self.nextTrackAvailable = self.trackQueue.length > 0;
+            Graphics.selectStyle(self.currentStyle);
+            Graphics.init();
             if (self.currentTrack) {
                 self.selectTrack(self.currentTrack);
             }
-            Graphics.init();
-            Graphics.selectStyle(self.currentStyle);
         }());
-          
-
-        // Alert.error('This song cannot be played');
 
     }]);
         
