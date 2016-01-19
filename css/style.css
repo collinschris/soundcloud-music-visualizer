@@ -1,0 +1,124 @@
+body {
+  background-color: #000000;
+  margin: 0px;
+  overflow: hidden;
+}
+
+canvas {
+  width: 100%;
+  height: 100%;
+}
+
+nav label {
+  color: white;
+}
+
+.static {
+  position: absolute;
+}
+
+#search-results {
+  top: 50px;
+}
+
+#track-queue {
+  top: 50px;
+  padding-left: 1em;
+}
+
+.list-group {
+  background-color: black;
+  color: black;
+}
+
+.list-group li {
+  color: black;
+}
+
+p {
+  color: white;
+}
+
+#audio-nav-elems {
+  padding-top: 0.5em;
+}
+
+.track-link-white, .track-link-white:hover, .track-link-white:visited {
+  color: white;
+}
+
+.track-link-gray, .track-link-gray:hover, .track-link-gray:visited {
+  color: gray; 
+}
+
+.track-link-black, .track-link-black:hover, .track-link-black:visited {
+  color: black;
+}
+
+.img-small img {
+  height: 24px;
+  width: 24px;
+}
+
+.img-medium img {
+  height: 40px;
+  width: 40px;
+}
+
+.light-text a, .light-text a:hover, .light-text a:visited {
+  color: white;
+}
+
+#error-wrapper {
+  margin-top: 6em;
+  width: 100%;
+}
+
+.top-padding-sm {
+  padding-top: 0.5em;
+}
+/* AUTOCOMPLETE */
+
+.autocomplete{
+  width: 100%;
+  position: relative;
+}
+
+.autocomplete input{
+  width: 100%;
+}
+
+.autocomplete ul{
+  position: absolute;
+  background-color: #fff;
+  left: 0;
+  width: 100%;
+  border-left: 1px solid #888;
+  border-right: 1px solid #888;
+  border-bottom: 1px solid #888;
+  z-index: 1;
+}
+
+.autocomplete li{
+  text-align: left;
+  list-style: none;
+  width: 100%;
+  padding:0.4em;
+  background-color: #fff;
+}
+
+.autocomplete li.active{
+  width: 100%;
+  background-color: #4bf;
+}
+
+.autocomplete .highlight {
+  background-color: #E2E2E2;
+}
+
+.autocomplete li.active .highlight {
+  background: #666;
+  color: #fff;
+}
+
+

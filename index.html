@@ -1,0 +1,105 @@
+<html lang="en" ng-app="musicViz">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge" >
+
+      <title>SoundCloud Music Visualizer</title>
+      <!-- scripts -->
+      <script src="libs/three.min.js" defer></script>
+      <script src="libs/angularjs-1.3.14-angular.min.js" defer></script>
+      <script src="js/app.js" defer></script>
+      <script src="js/controller.js" defer></script>
+      <script src="js/filters.js" defer></script>
+      <script src="js/directives.js" defer></script>
+      <script src="js/services/soundcloud-service.js" defer></script>
+      <script src="js/services/audio-service.js" defer></script>
+      <script src="js/services/graphics-helper.js" defer></script>
+      <script src="js/services/graphics.js" defer></script>
+      <script src="js/services/alert.js" defer></script>
+
+      <!-- style -->
+      <link rel="stylesheet" type="text/css" href="libs/bootstrap-3.3.5-dist/css/bootstrap.min.css">
+      <link rel="stylesheet" type="text/css" href="css/style.css">
+      
+    </head>
+    <body ng-controller="musicVizController as ctrl">
+
+      <div ng-mousemove="ctrl.handleMouseMove()">
+
+        <nav ng-show="ctrl.showMenus" class="navbar navbar-inverse navbar-fixed-top">
+          <div class="container-fluid">
+            <!-- search label -->
+            <div class="col-md-2 top-padding-sm">
+              <label for="search-soundcloud">Search</label> 
+              <img src="imgs/soundcloud-logo-white.png">
+            </div>
+
+            <!-- search bar -->
+            <div class="col-md-5 top-padding-sm">
+              <div class="autocomplete" key-controls>
+                <input ng-model="ctrl.searchQuery" type="text" class="form-control" id="search-soundcloud" placeholder="Daft Punk">
+                <ul id="autocomplete-search-results">
+                  <li ng-repeat="result in ctrl.searchResults | streamable"
+                      ng-mouseenter="hovering=true"
+                      ng-mouseleave="hovering=false"
+                      ng-class="{'highlight':hovering}">
+                    <div class="row">
+                      <div class="col-md-9">
+                        <track track="result" elem-classes="['img-small']" inline="true"></track>
+                      </div>
+                      <div class="pull-right" style="padding-right:1em;">
+                        <button title="Play" ng-click="ctrl.selectTrack(result)" class="btn btn-small btn-default"><span class="glyphicon glyphicon-play"></span></button>
+                        <button title="Add to queue" ng-click="ctrl.addToTrackQueue(result)" class="btn btn-small btn-default"><span class="glyphicon glyphicon-plus"></span></button>
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- animation styles -->
+            <div class="col-md-5">
+              <ul class="nav navbar-nav">
+                <li><p class="navbar-text">Animation Styles:</p></li>
+                <li ng-class="{'active': ctrl.currentStyle == 0}" ng-click="ctrl.selectStyle(0)"><a href="#">Lines</a></li>
+                <li ng-class="{'active': ctrl.currentStyle == 1}" ng-click="ctrl.selectStyle(1)"><a href="#">Spheres</a></li>
+              </ul>
+            </div>
+
+          </div>
+        </nav>
+
+        <!-- displays error messages here -->
+        <div class="static" id="error-wrapper"></div>
+
+        <!-- track queue -->
+        <div ng-show="ctrl.showMenus" class="static" id="track-queue">
+          <p>Track Queue:</p>
+          <track ng-repeat="track in ctrl.trackQueue track by $index" elem-classes="['img-small', 'light-text']" inline="true" track="track"></track>
+        </div>
+
+        <!-- graphics area -->
+        <div id="canvas-wrapper"></div>
+
+        <!-- bottom toolbar -->
+        <nav ng-show="ctrl.showMenus" class="navbar navbar-inverse navbar-fixed-bottom">
+          <div id="audio-nav-elems">
+              <track class="col-md-4" elem-classes="['img-medium']" track="ctrl.currentTrack"></track>
+              <div class="col-md-4" id="audio-wrapper">
+                <audio preload="auto" crossorigin="anonymous" src="#" controls autoplay id="player"></audio>
+              </div>
+              <button ng-click="ctrl.nextTrack()" 
+                      ng-disabled="!ctrl.nextTrackAvailable"
+                      class="col-md-1 btn btn-default"><span class="glyphicon glyphicon-forward"></span>
+              </button>
+              <a href="https://soundcloud.com/">
+                <img class="pull-right" src="imgs/powered-by-soundcloud-white.png">
+              </a>
+            </div>
+          </div>
+        </nav>
+
+      </div>
+    </body>
+</html>
