@@ -48,7 +48,11 @@
         };
 
         AudioPlayer.configNodes = function() {
-            if (!AudioPlayer.ctx) AudioPlayer.ctx = new AudioContext(); // only need 1 audio context obj
+            try {
+                if (!AudioPlayer.ctx) AudioPlayer.ctx = new AudioContext(); // only need 1 audio context obj
+            } catch (err) {
+                alert("Awwww shucks... It looks like this browser is not supported. Try using Chrome or Firefox.");
+            }
             AudioPlayer.analyser = AudioPlayer.ctx.createAnalyser();
             AudioPlayer.analyser.fftSize = AudioPlayer.frequencyBuckets*2;
             AudioPlayer.src = AudioPlayer.ctx.createMediaElementSource(AudioPlayer.audioElem);
