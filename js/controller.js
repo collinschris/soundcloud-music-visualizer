@@ -3,6 +3,12 @@
     'use strict';
     const CLIENT_ID = '5a890217b642c08738865e3687299be3';
 
+
+    //TODO: fill out gitignore 
+    //TODO: deploy 
+    //TODO: write readme
+    //TODO: link to from website
+
     /* Controllers */
     var controller = angular.module('musicVizController');
 
